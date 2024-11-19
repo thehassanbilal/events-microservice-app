@@ -1,26 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { CreateGatewayDto } from './dto/create-gateway.dto';
-import { UpdateGatewayDto } from './dto/update-gateway.dto';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
 export class GatewayService {
-  create(createGatewayDto: CreateGatewayDto) {
-    return 'This action adds a new gateway';
-  }
+  constructor(
+    @Inject('EVENT_SERVICE') private readonly eventProxyClient: ClientKafka,
+  ) {}
 
-  findAll() {
-    return `This action returns all gateway`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} gateway`;
-  }
-
-  update(id: number, updateGatewayDto: UpdateGatewayDto) {
-    return `This action updates a #${id} gateway`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} gateway`;
+  createEventEvent(payload: any) {
+    this.eventProxyClient.emit('create_event', payload);
   }
 }
