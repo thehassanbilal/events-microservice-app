@@ -1,9 +1,47 @@
 import { Module } from '@nestjs/common';
 import { EventService } from './event.service';
-import { EventController } from './event.controller';
+import { VirtualEventController } from './virtual-event.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  VirtualEvent,
+  VirtualEventSchema,
+} from './schema/virtual-event.schema';
+import {
+  PhysicalEvent,
+  PhysicalEventSchema,
+} from './schema/physical-event.schema';
+import { PhysicalEventController } from './physical-event.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  controllers: [EventController],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: VirtualEvent.name,
+        schema: VirtualEventSchema,
+      },
+      {
+        name: PhysicalEvent.name,
+        schema: PhysicalEventSchema,
+      },
+    ]),
+    ClientsModule.register([
+      {
+        name: 'KAFKA_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'event-service',
+            brokers: ['localhost:9092'],
+          },
+          consumer: {
+            groupId: 'event-consumer',
+          },
+        },
+      },
+    ]),
+  ],
+  controllers: [VirtualEventController, PhysicalEventController],
   providers: [EventService],
 })
 export class EventModule {}
