@@ -1,39 +1,32 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Put,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Body, Param } from '@nestjs/common';
 import { EventService } from './event.service';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('events/physical')
 export class PhysicalEventController {
   constructor(private readonly eventService: EventService) {}
 
-  @Post()
+  @MessagePattern('event.physical.created')
   async createPhysicalEvent(@Body() eventDto: any) {
     return this.eventService.createPhysicalEvent(eventDto);
   }
 
-  @Get()
+  @MessagePattern('event.physical.get.all')
   async getAllPhysicalEvents() {
     return this.eventService.getAllPhysicalEvents();
   }
 
-  @Get(':id')
+  @MessagePattern('event.physical.get')
   async getPhysicalEventById(@Param('id') id: string) {
     return this.eventService.getPhysicalEventById(id);
   }
 
-  @Put(':id')
+  @MessagePattern('event.physical.update')
   async updatePhysicalEvent(@Param('id') id: string, @Body() eventDto: any) {
     return this.eventService.updatePhysicalEvent(id, eventDto);
   }
 
-  @Delete(':id')
+  @MessagePattern('event.physical.delete')
   async deletePhysicalEvent(@Param('id') id: string) {
     return this.eventService.deletePhysicalEvent(id);
   }

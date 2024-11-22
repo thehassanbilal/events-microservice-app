@@ -16,26 +16,19 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 @Module({
   imports: [
     MongooseModule.forFeature([
-      {
-        name: VirtualEvent.name,
-        schema: VirtualEventSchema,
-      },
-      {
-        name: PhysicalEvent.name,
-        schema: PhysicalEventSchema,
-      },
+      { name: VirtualEvent.name, schema: VirtualEventSchema },
+      { name: PhysicalEvent.name, schema: PhysicalEventSchema },
     ]),
     ClientsModule.register([
       {
-        name: 'KAFKA_SERVICE',
+        name: 'EVENT_SERVICE',
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'event-service',
             brokers: ['localhost:9092'],
           },
           consumer: {
-            groupId: 'event-consumer',
+            groupId: 'event-service-consumer',
           },
         },
       },

@@ -1,39 +1,39 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Put,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Body, Param, Inject } from '@nestjs/common';
 import { EventService } from './event.service';
+import { ClientKafka, MessagePattern } from '@nestjs/microservices';
 
 @Controller('events/virtual')
 export class VirtualEventController {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    @Inject('EVENT_SERVICE') private readonly eventProxyClient: ClientKafka,
+  ) {}
 
-  @Post()
+  onModuleDestroy() {
+    throw new Error('Method not implemented.');
+  }
+
+  @MessagePattern('event.virtual.create')
   async createVirtualEvent(@Body() eventDto: any) {
     return this.eventService.createVirtualEvent(eventDto);
   }
 
-  @Get()
+  @MessagePattern('event.virtual.get.all')
   async getAllVirtualEvents() {
     return this.eventService.getAllVirtualEvents();
   }
 
-  @Get(':id')
+  @MessagePattern('event.virtual.get')
   async getVirtualEventById(@Param('id') id: string) {
     return this.eventService.getVirtualEventById(id);
   }
 
-  @Put(':id')
+  @MessagePattern('event.virtual.updated')
   async updateVirtualEvent(@Param('id') id: string, @Body() eventDto: any) {
     return this.eventService.updateVirtualEvent(id, eventDto);
   }
 
-  @Delete(':id')
+  @MessagePattern('event.virtual.deleted')
   async deleteVirtualEvent(@Param('id') id: string) {
     return this.eventService.deleteVirtualEvent(id);
   }

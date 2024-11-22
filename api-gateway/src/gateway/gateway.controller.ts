@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { GatewayService } from './gateway.service';
 
-@Controller('gateway')
+@Controller('gateway/events')
 export class GatewayController {
   constructor(private readonly eventService: GatewayService) {}
 
