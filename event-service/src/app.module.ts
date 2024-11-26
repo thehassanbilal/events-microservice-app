@@ -3,13 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventModule } from './event/event.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { Connection } from 'mongoose';
-
-const uri = 'mongodb://127.0.0.1/event-service';
-const logString =
-  '==================== 🚀🚀🚀🚀 Connected to database 🚀🚀🚀🚀 ====================';
 
 @Module({
   imports: [
@@ -17,10 +13,12 @@ const logString =
       load: [configuration],
     }),
     MongooseModule.forRootAsync({
-      useFactory: () => ({
-        uri: uri,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (config: ConfigService) => ({
+        uri: config.get<string>('MONGODB_URI'),
         onConnectionCreate: (connection: Connection) => {
-          console.log(logString);
+          console.log('🚀🚀🚀🚀 Connected to database 🚀🚀🚀🚀');
           return connection;
         },
       }),
