@@ -7,11 +7,12 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { GatewayService } from './gateway.service';
+import { EventService } from './event.service';
+import { Types } from 'mongoose';
 
-@Controller('gateway/events')
-export class GatewayController {
-  constructor(private readonly eventService: GatewayService) {}
+@Controller('events')
+export class EventController {
+  constructor(private readonly eventService: EventService) {}
 
   // Virtual Event CRUD Operations
   @Post('virtual')
@@ -25,17 +26,20 @@ export class GatewayController {
   }
 
   @Get('virtual/:id')
-  async getVirtualEventById(@Param('id') id: string) {
+  async getVirtualEventById(@Param('id') id: Types.ObjectId) {
     return this.eventService.getVirtualEventById(id);
   }
 
   @Put('virtual/:id')
-  async updateVirtualEvent(@Param('id') id: string, @Body() eventDto: any) {
+  async updateVirtualEvent(
+    @Param('id') id: Types.ObjectId,
+    @Body() eventDto: any,
+  ) {
     return this.eventService.updateVirtualEvent(id, eventDto);
   }
 
   @Delete('virtual/:id')
-  async deleteVirtualEvent(@Param('id') id: string) {
+  async deleteVirtualEvent(@Param('id') id: Types.ObjectId) {
     return this.eventService.deleteVirtualEvent(id);
   }
 
@@ -51,17 +55,20 @@ export class GatewayController {
   }
 
   @Get('physical/:id')
-  async getPhysicalEventById(@Param('id') id: string) {
+  async getPhysicalEventById(@Param('id') id: Types.ObjectId) {
     return this.eventService.getPhysicalEventById(id);
   }
 
   @Put('physical/:id')
-  async updatePhysicalEvent(@Param('id') id: string, @Body() eventDto: any) {
+  async updatePhysicalEvent(
+    @Param('id') id: Types.ObjectId,
+    @Body() eventDto: any,
+  ) {
     return this.eventService.updatePhysicalEvent(id, eventDto);
   }
 
   @Delete('physical/:id')
-  async deletePhysicalEvent(@Param('id') id: string) {
+  async deletePhysicalEvent(@Param('id') id: Types.ObjectId) {
     return this.eventService.deletePhysicalEvent(id);
   }
 }

@@ -5,41 +5,41 @@ export type VirtualEventDocument = HydratedDocument<VirtualEvent>;
 
 @Schema({ timestamps: true })
 export class VirtualEvent {
-  @Prop({ required: true })
+  @Prop()
   eventType: string; // Fixed value: "virtual"
 
-  @Prop({ required: true })
+  @Prop()
   url: string; // URL for virtual events
 
-  @Prop({ required: true })
+  @Prop()
   meetingId: string;
 
-  @Prop({ required: true })
+  @Prop()
   passcode: string;
 
-  @Prop({ required: true })
+  @Prop()
   source: string; // e.g., ZOOM
 
   // Common fields
-  @Prop({ required: true })
+  @Prop()
   team: string;
 
-  @Prop({ required: true })
+  @Prop()
   title: string;
 
-  @Prop({ required: true })
+  @Prop()
   category: string;
 
-  @Prop({ required: true })
+  @Prop()
   startDate: Date;
 
-  @Prop({ required: true })
+  @Prop()
   endDate: Date;
 
   @Prop({ type: [String], required: true })
   languages: string[];
 
-  @Prop({ required: true })
+  @Prop()
   timezone: string;
 
   @Prop({ type: Number, default: 0 })

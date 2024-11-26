@@ -5,9 +5,10 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
+import { Types } from 'mongoose';
 
 @Injectable()
-export class GatewayService implements OnModuleInit, OnModuleDestroy {
+export class EventService implements OnModuleInit, OnModuleDestroy {
   constructor(
     @Inject('EVENT_SERVICE') private readonly eventProxyClient: ClientKafka,
   ) {}
@@ -15,15 +16,16 @@ export class GatewayService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     const requestPatterns = [
       'event.virtual.create',
-      'event.get.all.virtual',
-      'event.get.virtual',
-      'event.updated.virtual',
-      'event.deleted.virtual',
-      'event.created.physical',
-      'event.get.all.physical',
-      'event.get.physical',
-      'event.updated.physical',
-      'event.deleted.physical',
+      'event.virtual.get.all',
+      'event.virtual.getById',
+      'event.virtual.updateById',
+      'event.virtual.deleteById',
+
+      'event.physical.create',
+      'event.physical.get.all',
+      'event.physical.getById',
+      'event.physical.updateById',
+      'event.physical.deleteById',
     ];
 
     requestPatterns.forEach((pattern) => {
@@ -46,22 +48,22 @@ export class GatewayService implements OnModuleInit, OnModuleDestroy {
   }
 
   async getAllVirtualEvents() {
-    return this.eventProxyClient.send('event.get.all.virtual', {});
+    return this.eventProxyClient.send('event.virtual.get.all', {});
   }
 
-  async getVirtualEventById(id: string) {
-    return this.eventProxyClient.send('event.get.virtual', { id });
+  async getVirtualEventById(id: Types.ObjectId) {
+    return this.eventProxyClient.send('event.virtual.getById', { id });
   }
 
-  async updateVirtualEvent(id: string, eventDto: any) {
-    return this.eventProxyClient.send('event.updated.virtual', {
+  async updateVirtualEvent(id: Types.ObjectId, eventDto: any) {
+    return this.eventProxyClient.send('event.virtual.updateById', {
       id,
       ...eventDto,
     });
   }
 
-  async deleteVirtualEvent(id: string) {
-    return this.eventProxyClient.send('event.deleted.virtual', { id });
+  async deleteVirtualEvent(id: Types.ObjectId) {
+    return this.eventProxyClient.send('event.virtual.deleteById', { id });
   }
 
   // Physical Event CRUD Operations
@@ -73,18 +75,18 @@ export class GatewayService implements OnModuleInit, OnModuleDestroy {
     return this.eventProxyClient.send('event.get.all.physical', {});
   }
 
-  async getPhysicalEventById(id: string) {
+  async getPhysicalEventById(id: Types.ObjectId) {
     return this.eventProxyClient.send('event.get.physical', { id });
   }
 
-  async updatePhysicalEvent(id: string, eventDto: any) {
+  async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
     return this.eventProxyClient.send('event.updated.physical', {
       id,
       ...eventDto,
     });
   }
 
-  async deletePhysicalEvent(id: string) {
+  async deletePhysicalEvent(id: Types.ObjectId) {
     return this.eventProxyClient.send('event.deleted.physical', { id });
   }
 }

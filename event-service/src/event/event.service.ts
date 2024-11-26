@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import {
   VirtualEvent,
   VirtualEventDocument,
@@ -9,6 +9,7 @@ import {
   PhysicalEvent,
   PhysicalEventDocument,
 } from './schema/physical-event.schema';
+import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 
 @Injectable()
 export class EventService {
@@ -24,25 +25,24 @@ export class EventService {
   // CRUD Operations for Virtual Events
 
   async createVirtualEvent(eventDto: any) {
-    // const newEvent = new this.virtualEventModel(eventDto);
-    // await newEvent.save();
-    console.log('here is data', eventDto);
-    const newEvent = 'Virtual Event Created';
-    // this.kafkaClient.emit('event.created.virtual', newEvent); // Emit Kafka event
+    const newEvent = new this.virtualEventModel(eventDto);
+    await newEvent.save();
     return newEvent;
   }
 
-  async updateVirtualEvent(id: string, eventDto: any) {
+  async updateVirtualEvent(
+    id: Types.ObjectId,
+    eventDto: UpdateVirtualEventDto,
+  ) {
     const updatedEvent = await this.virtualEventModel.findByIdAndUpdate(
       id,
       eventDto,
       { new: true },
     );
-    // this.kafkaClient.emit('event.updated.virtual', updatedEvent); // Emit Kafka event
     return updatedEvent;
   }
 
-  async deleteVirtualEvent(id: string) {
+  async deleteVirtualEvent(id: Types.ObjectId) {
     const deletedEvent = await this.virtualEventModel.findByIdAndDelete(id);
     // this.kafkaClient.emit('event.deleted.virtual', deletedEvent); // Emit Kafka event
     return deletedEvent;
@@ -52,7 +52,7 @@ export class EventService {
     return this.virtualEventModel.find();
   }
 
-  async getVirtualEventById(id: string) {
+  async getVirtualEventById(id: Types.ObjectId) {
     return this.virtualEventModel.findById(id);
   }
 
@@ -64,7 +64,7 @@ export class EventService {
     return newEvent;
   }
 
-  async updatePhysicalEvent(id: string, eventDto: any) {
+  async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
     const updatedEvent = await this.physicalEventModel.findByIdAndUpdate(
       id,
       eventDto,
@@ -74,7 +74,7 @@ export class EventService {
     return updatedEvent;
   }
 
-  async deletePhysicalEvent(id: string) {
+  async deletePhysicalEvent(id: Types.ObjectId) {
     const deletedEvent = await this.physicalEventModel.findByIdAndDelete(id);
     // this.kafkaClient.emit('event.deleted.physical', deletedEvent); // Emit Kafka event
     return deletedEvent;
@@ -84,7 +84,7 @@ export class EventService {
     return this.physicalEventModel.find();
   }
 
-  async getPhysicalEventById(id: string) {
+  async getPhysicalEventById(id: Types.ObjectId) {
     return this.physicalEventModel.findById(id);
   }
 }

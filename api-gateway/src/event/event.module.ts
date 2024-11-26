@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { GatewayService } from './gateway.service';
-import { GatewayController } from './gateway.controller';
+import { EventService } from './event.service';
+import { EventController } from './event.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
@@ -20,7 +20,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  controllers: [GatewayController],
-  providers: [GatewayService],
+  controllers: [EventController],
+  providers: [EventService],
 })
-export class GatewayModule {}
+export class EventModule {}
