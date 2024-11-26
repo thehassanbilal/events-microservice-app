@@ -10,6 +10,7 @@ import {
   PhysicalEventDocument,
 } from './schema/physical-event.schema';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
+import { toObjectId } from 'src/common/helpers/helpers';
 
 @Injectable()
 export class EventService {
@@ -30,21 +31,20 @@ export class EventService {
     return newEvent;
   }
 
-  async updateVirtualEvent(
-    id: Types.ObjectId,
-    eventDto: UpdateVirtualEventDto,
-  ) {
+  async updateVirtualEvent(eventDto: UpdateVirtualEventDto) {
+    const { id, ...rest } = eventDto;
+
     const updatedEvent = await this.virtualEventModel.findByIdAndUpdate(
-      id,
-      eventDto,
+      toObjectId(id),
+      rest,
       { new: true },
     );
+
     return updatedEvent;
   }
 
   async deleteVirtualEvent(id: Types.ObjectId) {
     const deletedEvent = await this.virtualEventModel.findByIdAndDelete(id);
-    // this.kafkaClient.emit('event.deleted.virtual', deletedEvent); // Emit Kafka event
     return deletedEvent;
   }
 
@@ -53,14 +53,13 @@ export class EventService {
   }
 
   async getVirtualEventById(id: Types.ObjectId) {
-    return this.virtualEventModel.findById(id);
+    return this.virtualEventModel.findByIdAndUpdate(id, { new: true });
   }
 
   // CRUD Operations for Physical Events
   async createPhysicalEvent(eventDto: any) {
     const newEvent = new this.physicalEventModel(eventDto);
     await newEvent.save();
-    // this.kafkaClient.emit('event.created.physical', newEvent); // Emit Kafka event
     return newEvent;
   }
 
@@ -70,13 +69,11 @@ export class EventService {
       eventDto,
       { new: true },
     );
-    // this.kafkaClient.emit('event.updated.physical', updatedEvent); // Emit Kafka event
     return updatedEvent;
   }
 
   async deletePhysicalEvent(id: Types.ObjectId) {
     const deletedEvent = await this.physicalEventModel.findByIdAndDelete(id);
-    // this.kafkaClient.emit('event.deleted.physical', deletedEvent); // Emit Kafka event
     return deletedEvent;
   }
 

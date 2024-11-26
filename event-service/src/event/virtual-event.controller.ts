@@ -19,17 +19,13 @@ export class VirtualEventController {
   }
 
   @MessagePattern('event.virtual.getById')
-  async getVirtualEventById(@Body() body: any) {
-    const { id } = body;
+  async getVirtualEventById(@Param('id') id: Types.ObjectId) {
     return this.eventService.getVirtualEventById(id);
   }
 
   @MessagePattern('event.virtual.updateById')
-  async updateVirtualEvent(
-    @Param('id') id: Types.ObjectId,
-    @Body() eventDto: UpdateVirtualEventDto,
-  ) {
-    return this.eventService.updateVirtualEvent(id, eventDto);
+  async updateVirtualEvent(@Body() eventDto: UpdateVirtualEventDto) {
+    return this.eventService.updateVirtualEvent(eventDto);
   }
 
   @MessagePattern('event.virtual.deleteById')

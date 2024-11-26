@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Types } from 'mongoose';
+import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {
@@ -55,7 +56,11 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
     return this.eventProxyClient.send('event.virtual.getById', { id });
   }
 
-  async updateVirtualEvent(id: Types.ObjectId, eventDto: any) {
+  async updateVirtualEvent(
+    id: Types.ObjectId,
+    eventDto: UpdateVirtualEventDto,
+  ) {
+    console.log('here is data', eventDto);
     return this.eventProxyClient.send('event.virtual.updateById', {
       id,
       ...eventDto,

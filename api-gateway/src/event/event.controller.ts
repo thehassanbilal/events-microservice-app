@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { Types } from 'mongoose';
+import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 
 @Controller('events')
 export class EventController {
@@ -33,7 +34,7 @@ export class EventController {
   @Put('virtual/:id')
   async updateVirtualEvent(
     @Param('id') id: Types.ObjectId,
-    @Body() eventDto: any,
+    @Body() eventDto: UpdateVirtualEventDto,
   ) {
     return this.eventService.updateVirtualEvent(id, eventDto);
   }
