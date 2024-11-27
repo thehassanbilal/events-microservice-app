@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { EventStatus } from '../enum/event-status.enum';
 
 export type VirtualEventDocument = HydratedDocument<VirtualEvent>;
 
@@ -42,11 +43,11 @@ export class VirtualEvent {
   @Prop()
   timezone: string;
 
-  @Prop({ type: Number, default: 0 })
-  numberOfBreaks: number;
-
   @Prop({ type: [{ from: String, to: String }] })
   breaks: { from: string; to: string }[];
+
+  @Prop({ enum: EventStatus, default: EventStatus.DRAFT })
+  status: string;
 }
 
 export const VirtualEventSchema = SchemaFactory.createForClass(VirtualEvent);

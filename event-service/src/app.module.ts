@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { Connection } from 'mongoose';
+import { EventCategoryModule } from './event-category/event-category.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Connection } from 'mongoose';
       }),
     }),
     EventModule,
+    EventCategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

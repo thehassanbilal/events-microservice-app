@@ -16,17 +16,17 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     const requestPatterns = [
-      'event.virtual.create',
-      'event.virtual.get.all',
-      'event.virtual.getById',
-      'event.virtual.updateById',
-      'event.virtual.deleteById',
+      'createVirtualEvent',
+      'findAllVirtualEvents',
+      'findOneVirtualEvent',
+      'updateVirtualEvent',
+      'deleteVirtualEvent',
 
-      'event.physical.create',
-      'event.physical.get.all',
-      'event.physical.getById',
-      'event.physical.updateById',
-      'event.physical.deleteById',
+      'createPhysicalEvent',
+      'findAllPhysicalEvents',
+      'findOnePhysicalEvent',
+      'updatePhysicalEvent',
+      'deletePhysicalEvent',
     ];
 
     requestPatterns.forEach((pattern) => {
@@ -42,56 +42,55 @@ export class EventService implements OnModuleInit, OnModuleDestroy {
 
   async createVirtualEvent(eventDto: any) {
     const reply = await this.eventProxyClient.send(
-      'event.virtual.create',
+      'createVirtualEvent',
       eventDto,
     );
     return reply.toPromise();
   }
 
   async getAllVirtualEvents() {
-    return this.eventProxyClient.send('event.virtual.get.all', {});
+    return this.eventProxyClient.send('findAllVirtualEvents', {});
   }
 
   async getVirtualEventById(id: Types.ObjectId) {
-    return this.eventProxyClient.send('event.virtual.getById', { id });
+    return this.eventProxyClient.send('findOneVirtualEvent', { id });
   }
 
   async updateVirtualEvent(
     id: Types.ObjectId,
     eventDto: UpdateVirtualEventDto,
   ) {
-    console.log('here is data', eventDto);
-    return this.eventProxyClient.send('event.virtual.updateById', {
+    return this.eventProxyClient.send('updateVirtualEvent', {
       id,
       ...eventDto,
     });
   }
 
   async deleteVirtualEvent(id: Types.ObjectId) {
-    return this.eventProxyClient.send('event.virtual.deleteById', { id });
+    return this.eventProxyClient.send('deleteVirtualEvent', { id });
   }
 
   // Physical Event CRUD Operations
   async createPhysicalEvent(eventDto: any) {
-    return this.eventProxyClient.send('event.created.physical', eventDto);
+    return this.eventProxyClient.send('createPhysicalEvent', eventDto);
   }
 
   async getAllPhysicalEvents() {
-    return this.eventProxyClient.send('event.get.all.physical', {});
+    return this.eventProxyClient.send('findAllPhysicalEvents', {});
   }
 
   async getPhysicalEventById(id: Types.ObjectId) {
-    return this.eventProxyClient.send('event.get.physical', { id });
+    return this.eventProxyClient.send('findOnePhysicalEvent', { id });
   }
 
   async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
-    return this.eventProxyClient.send('event.updated.physical', {
+    return this.eventProxyClient.send('updatePhysicalEvent', {
       id,
       ...eventDto,
     });
   }
 
   async deletePhysicalEvent(id: Types.ObjectId) {
-    return this.eventProxyClient.send('event.deleted.physical', { id });
+    return this.eventProxyClient.send('deletePhysicalEvent', { id });
   }
 }
