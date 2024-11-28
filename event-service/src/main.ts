@@ -6,6 +6,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
+    name: 'EVENT_SERVICE',
     transport: Transport.KAFKA,
     options: {
       client: {

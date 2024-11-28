@@ -38,6 +38,7 @@ export class EventCategoryService {
     );
 
     console.log('here is data', reply.toPromise());
+
     return reply.toPromise();
   }
 
