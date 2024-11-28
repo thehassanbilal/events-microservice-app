@@ -4,7 +4,7 @@ import { EventCategoryService } from './event-category.service';
 import { CreateEventCategoryDto } from './dto/create-event-category.dto';
 import { UpdateEventCategoryDto } from './dto/update-event-category.dto';
 
-@Controller()
+@Controller('events/categories')
 export class EventCategoryController {
   constructor(private readonly eventCategoryService: EventCategoryService) {}
 

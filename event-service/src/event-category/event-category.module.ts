@@ -6,26 +6,11 @@ import {
   EventCategory,
   EventCategorySchema,
 } from './schema/event-category.schema';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: EventCategory.name, schema: EventCategorySchema },
-    ]),
-    ClientsModule.register([
-      {
-        name: 'EVENT_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'event-service-consumer',
-          },
-        },
-      },
     ]),
   ],
   controllers: [EventCategoryController],

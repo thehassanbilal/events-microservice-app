@@ -31,11 +31,14 @@ export class EventCategoryService {
     this.eventProxyClient.close();
   }
 
-  create(createEventCategoryDto: CreateEventCategoryDto) {
-    return this.eventProxyClient.send(
+  async create(createEventCategoryDto: CreateEventCategoryDto) {
+    const reply = await this.eventProxyClient.send(
       'createEventCategory',
       createEventCategoryDto,
     );
+
+    console.log('here is data', reply.toPromise());
+    return reply.toPromise();
   }
 
   findAll() {
