@@ -3,7 +3,15 @@ import { HydratedDocument } from 'mongoose';
 
 export type PhysicalEventDocument = HydratedDocument<PhysicalEvent>;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  toJSON: {
+    transform: (doc, ret) => {
+      delete ret.updatedAt;
+    },
+  },
+})
 export class PhysicalEvent {
   @Prop({ required: true })
   eventType: string; // Fixed value: "Physical"
@@ -41,6 +49,9 @@ export class PhysicalEvent {
 
   @Prop({ type: [{ from: String, to: String }] })
   breaks: { from: string; to: string }[];
+
+  @Prop()
+  deletedAt: Date;
 }
 
 export const PhysicalEventSchema = SchemaFactory.createForClass(PhysicalEvent);

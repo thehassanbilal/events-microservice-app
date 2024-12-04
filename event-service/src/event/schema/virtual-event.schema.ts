@@ -1,16 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { EventStatus } from '../enum/event-status.enum';
+import { VirtualEventSource } from '../enum/virtualEventSource.enum';
 
 export type VirtualEventDocument = HydratedDocument<VirtualEvent>;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  versionKey: false,
+  toJSON: {
+    transform: (doc, ret) => {
+      delete ret.updatedAt;
+    },
+  },
+})
 export class VirtualEvent {
-  @Prop()
-  eventType: string; // Fixed value: "virtual"
+  @Prop({ required: true, default: 'virtual' })
+  eventType: string;
 
   @Prop()
-  url: string; // URL for virtual events
+  url: string;
 
   @Prop()
   meetingId: string;
@@ -18,8 +27,10 @@ export class VirtualEvent {
   @Prop()
   passcode: string;
 
-  @Prop()
-  source: string; // e.g., ZOOM
+  @Prop({
+    enum: VirtualEventSource,
+  })
+  source: VirtualEventSource;
 
   // Common fields
   @Prop()
@@ -47,7 +58,10 @@ export class VirtualEvent {
   breaks: { from: string; to: string }[];
 
   @Prop({ enum: EventStatus, default: EventStatus.DRAFT })
-  status: string;
+  status: EventStatus;
+
+  @Prop()
+  deletedAt: Date;
 }
 
 export const VirtualEventSchema = SchemaFactory.createForClass(VirtualEvent);

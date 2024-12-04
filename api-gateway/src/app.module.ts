@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { EventModule } from './event/event.module';
 import { EventCategoryModule } from './event-category/event-category.module';
 // import { ClientsModule, Transport } from '@nestjs/microservices';
+import { EventGroupModule } from './event-group/event-group.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EventCategoryModule } from './event-category/event-category.module';
     // ]),
     EventModule,
     EventCategoryModule,
+    EventGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from 'config/configuration';
 import { Connection } from 'mongoose';
 import { EventCategoryModule } from './event-category/event-category.module';
+import { EventGroupModule } from './event-group/event-group.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { EventCategoryModule } from './event-category/event-category.module';
     }),
     EventModule,
     EventCategoryModule,
+    EventGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

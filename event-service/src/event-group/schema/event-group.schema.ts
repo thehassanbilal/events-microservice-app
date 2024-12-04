@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export type EventCategoryDocument = EventCategory & Document;
+export type EventGroupDocument = EventGroup & Document;
 
 @Schema({
   timestamps: true,
@@ -11,8 +11,8 @@ export type EventCategoryDocument = EventCategory & Document;
     },
   },
 })
-export class EventCategory {
-  @Prop({ required: true, unique: true })
+export class EventGroup {
+  @Prop()
   name: string;
 
   @Prop()
@@ -22,4 +22,4 @@ export class EventCategory {
   deletedAt: Date;
 }
 
-export const EventCategorySchema = SchemaFactory.createForClass(EventCategory);
+export const EventGroupSchema = SchemaFactory.createForClass(EventGroup);
