@@ -3,6 +3,7 @@ import { CreateEventCategoryDto } from './dto/create-event-category.dto';
 import { UpdateEventCategoryDto } from './dto/update-event-category.dto';
 import { ClientKafka } from '@nestjs/microservices';
 import { Types } from 'mongoose';
+import { PaginationDto } from 'src/global/paginated.dto';
 
 @Injectable()
 export class EventCategoryService {
@@ -22,6 +23,12 @@ export class EventCategoryService {
 
   findAll() {
     return this.eventProxyClient.send('findAllEventCategory', {});
+  }
+
+  findAllPaginated(paginationDto: PaginationDto) {
+    return this.eventProxyClient.send('findAllPaginatedEventCategory', {
+      paginationDto,
+    });
   }
 
   findOne(id: Types.ObjectId) {

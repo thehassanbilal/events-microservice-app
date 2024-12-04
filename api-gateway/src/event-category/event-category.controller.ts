@@ -11,6 +11,7 @@ import { EventCategoryService } from './event-category.service';
 import { CreateEventCategoryDto } from './dto/create-event-category.dto';
 import { UpdateEventCategoryDto } from './dto/update-event-category.dto';
 import { Types } from 'mongoose';
+import { PaginationDto } from 'src/global/paginated.dto';
 
 @Controller('event-category')
 export class EventCategoryController {
@@ -24,6 +25,11 @@ export class EventCategoryController {
   @Get()
   findAll() {
     return this.eventCategoryService.findAll();
+  }
+
+  @Get('paginated')
+  findAllPaginated(@Body() paginationDto: PaginationDto) {
+    return this.eventCategoryService.findAllPaginated(paginationDto);
   }
 
   @Get(':id')

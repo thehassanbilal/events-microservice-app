@@ -1,24 +1,14 @@
 import { Model, PipelineStage } from 'mongoose';
 
-import { SortOrder } from 'mongoose';
-
-interface PaginationParams {
-  page: number;
-  limit: number;
-  sort?:
-    | string
-    | { [key: string]: SortOrder | { $meta: any } }
-    | [string, SortOrder][];
-  filter?: string;
-}
+import { PaginationDto } from 'src/global/pagination.dto';
 
 export async function paginateWithMongoose<T>(
   model: Model<T>,
-  { page, limit, sort, filter }: PaginationParams,
+  { page, limit, sort, filter }: PaginationDto,
   query: object = {},
 ) {
-  page = Math.max(1, page);
-  limit = Math.max(1, Math.min(100, limit));
+  page = Math.max(1, page || 1);
+  limit = Math.max(1, Math.min(100, limit || 10));
   const skip = (page - 1) * limit;
 
   const queryBuilder = model.find(query);
@@ -31,16 +21,17 @@ export async function paginateWithMongoose<T>(
     queryBuilder.where('name').regex(new RegExp(filter, 'i'));
   }
 
-  const data = await queryBuilder.skip(skip).limit(limit).exec();
-  const total = await model.countDocuments(query).exec();
+  const records = await queryBuilder.skip(skip).limit(limit).exec();
+  const totalRecords = await model.countDocuments(query).exec();
+  const totalPages = Math.ceil(totalRecords / limit);
 
   return {
-    data,
     pagination: {
       page,
       limit,
-      total,
-      totalPages: Math.ceil(total / limit),
+      totalRecords,
+      totalPages: totalPages,
+      records,
     },
   };
 }

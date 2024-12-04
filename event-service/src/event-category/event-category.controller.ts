@@ -3,6 +3,7 @@ import { MessagePattern, Payload } from '@nestjs/microservices';
 import { EventCategoryService } from './event-category.service';
 import { CreateEventCategoryDto } from './dto/create-event-category.dto';
 import { UpdateEventCategoryDto } from './dto/update-event-category.dto';
+import { PaginationDto } from 'src/global/pagination.dto';
 
 @Controller('events/categories')
 export class EventCategoryController {
@@ -16,6 +17,11 @@ export class EventCategoryController {
   @MessagePattern('findAllEventCategory')
   findAll() {
     return this.eventCategoryService.findAll();
+  }
+
+  @MessagePattern('findAllPaginatedEventCategory')
+  findAllPaginated(@Payload() paginationDto: PaginationDto) {
+    return this.eventCategoryService.findAllPaginated(paginationDto);
   }
 
   @MessagePattern('findOneEventCategory')

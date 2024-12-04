@@ -7,6 +7,8 @@ import {
 } from './schema/event-category.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { PaginationDto } from 'src/global/pagination.dto';
+import { paginateWithMongoose } from 'src/pagination/pagination.service';
 
 @Injectable()
 export class EventCategoryService {
@@ -24,6 +26,15 @@ export class EventCategoryService {
 
   findAll() {
     return this.eventCategoryModel.find();
+  }
+
+  async findAllPaginated(paginationDto: PaginationDto) {
+    const result = await paginateWithMongoose(
+      this.eventCategoryModel,
+      paginationDto,
+    );
+
+    return result;
   }
 
   findOne(id: number) {

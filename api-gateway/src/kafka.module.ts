@@ -37,6 +37,7 @@ export class KafkaModule implements OnModuleInit {
     const eventRequestPatterns = [
       'createEventCategory',
       'findAllEventCategory',
+      'findAllPaginatedEventCategory',
       'findOneEventCategory',
       'updateEventCategory',
       'deleteEventCategory',
