@@ -1,51 +1,20 @@
-import {
-  Inject,
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Types } from 'mongoose';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 
 @Injectable()
-export class EventService implements OnModuleInit, OnModuleDestroy {
+export class EventService {
   constructor(
     @Inject('EVENT_SERVICE') private readonly eventProxyClient: ClientKafka,
   ) {}
-
-  async onModuleInit() {
-    const requestPatterns = [
-      'createVirtualEvent',
-      'findAllVirtualEvents',
-      'findOneVirtualEvent',
-      'updateVirtualEvent',
-      'deleteVirtualEvent',
-
-      'createPhysicalEvent',
-      'findAllPhysicalEvents',
-      'findOnePhysicalEvent',
-      'updatePhysicalEvent',
-      'deletePhysicalEvent',
-    ];
-
-    requestPatterns.forEach((pattern) => {
-      this.eventProxyClient.subscribeToResponseOf(pattern);
-    });
-
-    await this.eventProxyClient.connect();
-  }
-
-  onModuleDestroy() {
-    this.eventProxyClient.close();
-  }
 
   async createVirtualEvent(eventDto: any) {
     const reply = await this.eventProxyClient.send(
       'createVirtualEvent',
       eventDto,
     );
-    return reply.toPromise();
+    return reply;
   }
 
   async getAllVirtualEvents() {

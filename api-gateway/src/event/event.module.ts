@@ -1,25 +1,10 @@
 import { Module } from '@nestjs/common';
 import { EventService } from './event.service';
 import { EventController } from './event.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { KafkaModule } from 'src/kafka.module';
 
 @Module({
-  imports: [
-    ClientsModule.register([
-      {
-        name: 'EVENT_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'api-gateway-consumer',
-          },
-        },
-      },
-    ]),
-  ],
+  imports: [KafkaModule],
   controllers: [EventController],
   providers: [EventService],
 })

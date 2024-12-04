@@ -11,35 +11,13 @@ export class EventCategoryService {
     private readonly eventProxyClient: ClientKafka,
   ) {}
 
-  async onModuleInit() {
-    const requestPatterns = [
-      'createEventCategory',
-      'findAllEventCategory',
-      'findOneEventCategory',
-      'updateEventCategory',
-      'deleteEventCategory',
-    ];
-
-    requestPatterns.forEach((pattern) => {
-      this.eventProxyClient.subscribeToResponseOf(pattern);
-    });
-
-    await this.eventProxyClient.connect();
-  }
-
-  onModuleDestroy() {
-    this.eventProxyClient.close();
-  }
-
   async create(createEventCategoryDto: CreateEventCategoryDto) {
     const reply = await this.eventProxyClient.send(
       'createEventCategory',
       createEventCategoryDto,
     );
 
-    console.log('here is data', reply.toPromise());
-
-    return reply.toPromise();
+    return reply;
   }
 
   findAll() {
