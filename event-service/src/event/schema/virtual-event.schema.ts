@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import { EventStatus } from '../enum/event-status.enum';
 import { VirtualEventSource } from '../enum/virtualEventSource.enum';
+import { EventTeam } from 'src/event-team/schema/event-team.schema';
+import { EventCategory } from 'src/event-category/schema/event-category.schema';
 
 export type VirtualEventDocument = HydratedDocument<VirtualEvent>;
 
@@ -19,6 +21,15 @@ export class VirtualEvent {
   eventType: string;
 
   @Prop()
+  title: string;
+
+  @Prop()
+  startDate: Date;
+
+  @Prop()
+  endDate: Date;
+
+  @Prop()
   url: string;
 
   @Prop()
@@ -32,21 +43,19 @@ export class VirtualEvent {
   })
   source: VirtualEventSource;
 
-  // Common fields
-  @Prop()
-  team: string;
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: EventTeam.name,
+  })
+  team: mongoose.Schema.Types.ObjectId;
 
-  @Prop()
-  title: string;
-
-  @Prop()
-  category: string;
-
-  @Prop()
-  startDate: Date;
-
-  @Prop()
-  endDate: Date;
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: EventCategory.name,
+  })
+  category: mongoose.Schema.Types.ObjectId;
 
   @Prop({ type: [String], required: true })
   languages: string[];

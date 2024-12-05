@@ -1,5 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { EventCategory } from 'src/event-category/schema/event-category.schema';
+import { EventTeam } from 'src/event-team/schema/event-team.schema';
+import { EventStatus } from '../enum/event-status.enum';
 
 export type PhysicalEventDocument = HydratedDocument<PhysicalEvent>;
 
@@ -17,19 +20,27 @@ export class PhysicalEvent {
   eventType: string;
 
   @Prop({ required: true })
+  title: string;
+
+  @Prop({ required: true })
   venue: string;
 
   @Prop({ type: [String], required: true })
   attendees: string[];
 
-  @Prop({ required: true })
-  team: string;
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: EventTeam.name,
+  })
+  team: mongoose.Schema.Types.ObjectId;
 
-  @Prop({ required: true })
-  title: string;
-
-  @Prop({ required: true })
-  category: string;
+  @Prop({
+    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: EventCategory.name,
+  })
+  category: mongoose.Schema.Types.ObjectId;
 
   @Prop({ required: true })
   startDate: Date;
@@ -43,11 +54,11 @@ export class PhysicalEvent {
   @Prop({ required: true })
   timezone: string;
 
-  @Prop({ type: Number, default: 0 })
-  numberOfBreaks: number;
-
   @Prop({ type: [{ from: String, to: String }] })
   breaks: { from: string; to: string }[];
+
+  @Prop({ enum: EventStatus, default: EventStatus.DRAFT })
+  status: EventStatus;
 
   @Prop()
   deletedAt: Date;
