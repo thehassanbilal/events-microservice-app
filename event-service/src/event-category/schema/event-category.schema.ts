@@ -18,7 +18,7 @@ export class EventCategory {
   @Prop()
   description: string;
 
-  @Prop()
+  @Prop({ default: null })
   deletedAt: Date;
 }
 

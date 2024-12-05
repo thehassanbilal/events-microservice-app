@@ -21,7 +21,7 @@ export class EventTeam {
   @Prop()
   description: string;
 
-  @Prop()
+  @Prop({ default: null })
   deletedAt: Date;
 }
 
