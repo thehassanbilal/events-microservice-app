@@ -13,16 +13,15 @@ export type PhysicalEventDocument = HydratedDocument<PhysicalEvent>;
   },
 })
 export class PhysicalEvent {
-  @Prop({ required: true })
-  eventType: string; // Fixed value: "Physical"
+  @Prop({ required: true, default: 'physical' })
+  eventType: string;
 
   @Prop({ required: true })
-  venue: string; // Venue for physical events
+  venue: string;
 
   @Prop({ type: [String], required: true })
-  attendees: string[]; // Array of attendee IDs or names
+  attendees: string[];
 
-  // Common fields
   @Prop({ required: true })
   team: string;
 

@@ -57,19 +57,19 @@ export class KafkaModule implements OnModuleInit {
       'deletePhysicalEvent',
     ];
 
-    const eventGroupRequestPatterns = [
-      'createEventGroup',
-      'findAllEventGroup',
-      'findAllPaginatedEventGroup',
-      'findOneEventGroup',
-      'updateEventGroup',
-      'deleteEventGroup',
+    const eventTeamRequestPatterns = [
+      'createEventTeam',
+      'findAllEventTeam',
+      'findAllPaginatedEventTeam',
+      'findOneEventTeam',
+      'updateEventTeam',
+      'deleteEventTeam',
     ];
 
     const allRequestPatterns = [
       ...eventRequestPatterns,
       ...eventCategoryRequestPatterns,
-      ...eventGroupRequestPatterns,
+      ...eventTeamRequestPatterns,
     ];
 
     allRequestPatterns.forEach((pattern) => {

@@ -4,29 +4,10 @@ import { AppService } from './app.service';
 import { EventModule } from './event/event.module';
 import { EventCategoryModule } from './event-category/event-category.module';
 // import { ClientsModule, Transport } from '@nestjs/microservices';
-import { EventGroupModule } from './event-group/event-group.module';
+import { EventTeamModule } from './event-team/event-team.module';
 
 @Module({
-  imports: [
-    // ClientsModule.register([
-    //   {
-    //     name: 'EVENT_SERVICE',
-    //     transport: Transport.KAFKA,
-    //     options: {
-    //       client: {
-    //         brokers: ['localhost:9092'],
-    //       },
-    //       consumer: {
-    //         // groupId: 'api-gateway-consumer',
-    //         groupId: 'event-service-consumer',
-    //       },
-    //     },
-    //   },
-    // ]),
-    EventModule,
-    EventCategoryModule,
-    EventGroupModule,
-  ],
+  imports: [EventModule, EventCategoryModule, EventTeamModule],
   controllers: [AppController],
   providers: [AppService],
 })

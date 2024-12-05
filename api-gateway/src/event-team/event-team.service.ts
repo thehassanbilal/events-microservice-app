@@ -1,34 +1,34 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateEventGroupDto } from './dto/create-event-group.dto';
-import { UpdateEventGroupDto } from './dto/update-event-group.dto';
+import { CreateEventTeamDto } from './dto/create-event-team.dto';
+import { UpdateEventTeamDto } from './dto/update-event-team.dto';
 import { Types } from 'mongoose';
 import { ClientKafka } from '@nestjs/microservices';
 import { PaginationDto } from 'src/global/paginated.dto';
 
 @Injectable()
-export class EventGroupService {
+export class EventTeamService {
   constructor(
     @Inject('EVENT_SERVICE')
     private readonly eventProxyClient: ClientKafka,
   ) {}
 
-  async create(createEventGroupDto: CreateEventGroupDto) {
+  async create(CreateEventTeamDto: CreateEventTeamDto) {
     const reply = await this.eventProxyClient.send(
-      'createEventGroup',
-      createEventGroupDto,
+      'createEventTeam',
+      CreateEventTeamDto,
     );
 
     return reply;
   }
 
   async findAll() {
-    const reply = await this.eventProxyClient.send('findAllEventGroup', {});
+    const reply = await this.eventProxyClient.send('findAllEventTeam', {});
     return reply;
   }
 
   async findAllPaginated(paginationDto: PaginationDto) {
     const reply = await this.eventProxyClient.send(
-      'findAllPaginatedEventGroup',
+      'findAllPaginatedEventTeam',
       {
         paginationDto,
       },
@@ -37,20 +37,20 @@ export class EventGroupService {
   }
 
   async findOne(id: Types.ObjectId) {
-    const reply = await this.eventProxyClient.send('findOneEventGroup', id);
+    const reply = await this.eventProxyClient.send('findOneEventTeam', id);
     return reply;
   }
 
-  async update(id: Types.ObjectId, updateEventGroupDto: UpdateEventGroupDto) {
-    const reply = await this.eventProxyClient.send('updateEventGroup', {
+  async update(id: Types.ObjectId, updateEventTeamDto: UpdateEventTeamDto) {
+    const reply = await this.eventProxyClient.send('updateEventTeam', {
       id,
-      ...updateEventGroupDto,
+      ...updateEventTeamDto,
     });
     return reply;
   }
 
   async remove(id: Types.ObjectId) {
-    const reply = await this.eventProxyClient.send('removeEventGroup', id);
+    const reply = await this.eventProxyClient.send('removeEventTeam', id);
     return reply;
   }
 }
