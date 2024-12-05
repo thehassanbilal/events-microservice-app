@@ -12,7 +12,10 @@ export type EventGroupDocument = EventGroup & Document;
   },
 })
 export class EventGroup {
-  @Prop()
+  @Prop({
+    required: true,
+    unique: true,
+  })
   name: string;
 
   @Prop()

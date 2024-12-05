@@ -27,14 +27,14 @@ export class EventGroupController {
     return this.eventGroupService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: Types.ObjectId) {
-    return this.eventGroupService.findOne(id);
-  }
-
   @Get('paginated')
   findAllPaginated(@Body() paginationDto: PaginationDto) {
     return this.eventGroupService.findAllPaginated(paginationDto);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: Types.ObjectId) {
+    return this.eventGroupService.findOne(id);
   }
 
   @Put(':id')
