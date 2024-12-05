@@ -15,11 +15,12 @@ export class EventGroupService {
 
   async create(createEventGroupDto: CreateEventGroupDto) {
     const eventGroup = new this.eventGroupModel(createEventGroupDto);
-    return eventGroup.save();
+    return (await eventGroup.save()).toObject();
   }
 
   async findAll() {
-    return this.eventGroupModel.find();
+    const result = await this.eventGroupModel.find();
+    return result;
   }
 
   async findAllPaginated(paginationDto: any) {
@@ -32,17 +33,23 @@ export class EventGroupService {
   }
 
   async findOne(id: Types.ObjectId) {
-    return this.eventGroupModel.findById(id);
+    const result = await this.eventGroupModel.findById(id);
+    return result.toObject();
   }
 
   async update(id: Types.ObjectId, updateEventGroupDto: UpdateEventGroupDto) {
-    return this.eventGroupModel.findByIdAndUpdate(id, updateEventGroupDto, {
-      new: true,
-    });
+    const result = await this.eventGroupModel.findByIdAndUpdate(
+      id,
+      updateEventGroupDto,
+      {
+        new: true,
+      },
+    );
+    return result.toObject();
   }
 
   async remove(id: Types.ObjectId) {
-    return this.eventGroupModel.findByIdAndUpdate(id, {
+    return await this.eventGroupModel.findByIdAndUpdate(id, {
       deletedAt: new Date(),
     });
   }

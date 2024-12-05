@@ -4,6 +4,7 @@ import { EventCategoryService } from './event-category.service';
 import { CreateEventCategoryDto } from './dto/create-event-category.dto';
 import { UpdateEventCategoryDto } from './dto/update-event-category.dto';
 import { PaginationDto } from 'src/global/pagination.dto';
+import { Types } from 'mongoose';
 
 @Controller('events/categories')
 export class EventCategoryController {
@@ -25,7 +26,9 @@ export class EventCategoryController {
   }
 
   @MessagePattern('findOneEventCategory')
-  findOne(@Payload() id: number) {
+  findOne(@Payload() id: Types.ObjectId) {
+    console.log('here is data', id);
+
     return this.eventCategoryService.findOne(id);
   }
 
@@ -38,7 +41,7 @@ export class EventCategoryController {
   }
 
   @MessagePattern('removeEventCategory')
-  remove(@Payload() id: number) {
+  remove(@Payload('id') id: Types.ObjectId) {
     return this.eventCategoryService.remove(id);
   }
 }

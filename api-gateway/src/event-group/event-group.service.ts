@@ -21,28 +21,36 @@ export class EventGroupService {
     return reply;
   }
 
-  findAll() {
-    return this.eventProxyClient.send('findAllEventGroup', {});
+  async findAll() {
+    const reply = await this.eventProxyClient.send('findAllEventGroup', {});
+    return reply;
   }
 
-  findAllPaginated(paginationDto: PaginationDto) {
-    return this.eventProxyClient.send('findAllPaginatedEventGroup', {
-      paginationDto,
-    });
+  async findAllPaginated(paginationDto: PaginationDto) {
+    const reply = await this.eventProxyClient.send(
+      'findAllPaginatedEventGroup',
+      {
+        paginationDto,
+      },
+    );
+    return reply;
   }
 
-  findOne(id: Types.ObjectId) {
-    return this.eventProxyClient.send('findOneEventGroup', id);
+  async findOne(id: Types.ObjectId) {
+    const reply = await this.eventProxyClient.send('findOneEventGroup', id);
+    return reply;
   }
 
-  update(id: Types.ObjectId, updateEventGroupDto: UpdateEventGroupDto) {
-    return this.eventProxyClient.send('updateEventGroup', {
+  async update(id: Types.ObjectId, updateEventGroupDto: UpdateEventGroupDto) {
+    const reply = await this.eventProxyClient.send('updateEventGroup', {
       id,
       ...updateEventGroupDto,
     });
+    return reply;
   }
 
-  remove(id: Types.ObjectId) {
-    return this.eventProxyClient.send('removeEventGroup', id);
+  async remove(id: Types.ObjectId) {
+    const reply = await this.eventProxyClient.send('removeEventGroup', id);
+    return reply;
   }
 }

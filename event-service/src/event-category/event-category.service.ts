@@ -5,10 +5,11 @@ import {
   EventCategory,
   EventCategoryDocument,
 } from './schema/event-category.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { PaginationDto } from 'src/global/pagination.dto';
 import { paginateWithMongoose } from 'src/pagination/pagination.service';
+import { catchException } from 'src/common/handle.exceptionh.helper';
 
 @Injectable()
 export class EventCategoryService {
@@ -21,11 +22,12 @@ export class EventCategoryService {
     const newEventCategory = new this.eventCategoryModel(
       createEventCategoryDto,
     );
-    return newEventCategory.save();
+    return (await newEventCategory.save()).toObject();
   }
 
-  findAll() {
-    return this.eventCategoryModel.find();
+  async findAll() {
+    const result = await this.eventCategoryModel.find();
+    return result;
   }
 
   async findAllPaginated(paginationDto: PaginationDto) {
@@ -37,21 +39,30 @@ export class EventCategoryService {
     return result;
   }
 
-  findOne(id: number) {
-    return this.eventCategoryModel.findById(id);
+  async findOne(id: Types.ObjectId) {
+    try {
+      const result = await this.eventCategoryModel.findById(id);
+      return result.toObject();
+    } catch (e) {
+      catchException(e);
+    }
   }
 
-  update(id: number, updateEventCategoryDto: UpdateEventCategoryDto) {
-    return this.eventCategoryModel.findByIdAndUpdate(
+  async update(
+    id: Types.ObjectId,
+    updateEventCategoryDto: UpdateEventCategoryDto,
+  ) {
+    const result = await this.eventCategoryModel.findByIdAndUpdate(
       id,
       updateEventCategoryDto,
       {
         new: true,
       },
     );
+    return result.toObject();
   }
 
-  remove(id: number) {
+  remove(id: Types.ObjectId) {
     return this.eventCategoryModel.findByIdAndDelete(id);
   }
 }

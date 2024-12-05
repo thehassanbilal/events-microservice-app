@@ -21,25 +21,35 @@ export class EventCategoryService {
     return reply;
   }
 
-  findAll() {
-    return this.eventProxyClient.send('findAllEventCategory', {});
+  async findAll() {
+    const reply = await this.eventProxyClient.send('findAllEventCategory', {});
+    return reply;
   }
 
-  findAllPaginated(paginationDto: PaginationDto) {
-    return this.eventProxyClient.send('findAllPaginatedEventCategory', {
-      paginationDto,
-    });
+  async findAllPaginated(paginationDto: PaginationDto) {
+    const reply = await this.eventProxyClient.send(
+      'findAllPaginatedEventCategory',
+      {
+        paginationDto,
+      },
+    );
+    return reply;
   }
 
-  findOne(id: Types.ObjectId) {
-    return this.eventProxyClient.send('findOneEventCategory', { id });
+  async findOne(id: Types.ObjectId) {
+    const reply = this.eventProxyClient.send('findOneEventCategory', { id });
+    return reply;
   }
 
-  update(id: Types.ObjectId, updateEventCategoryDto: UpdateEventCategoryDto) {
-    return this.eventProxyClient.send('updateEventCategory', {
+  async update(
+    id: Types.ObjectId,
+    updateEventCategoryDto: UpdateEventCategoryDto,
+  ) {
+    const reply = await this.eventProxyClient.send('updateEventCategory', {
       id,
       ...updateEventCategoryDto,
     });
+    return reply;
   }
 
   remove(id: Types.ObjectId) {
