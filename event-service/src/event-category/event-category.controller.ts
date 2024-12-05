@@ -26,9 +26,7 @@ export class EventCategoryController {
   }
 
   @MessagePattern('findOneEventCategory')
-  findOne(@Payload() id: Types.ObjectId) {
-    console.log('here is data', id);
-
+  findOne(@Payload('id') id: Types.ObjectId) {
     return this.eventCategoryService.findOne(id);
   }
 
