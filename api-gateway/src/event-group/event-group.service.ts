@@ -17,7 +17,8 @@ export class EventGroupService {
       'createEventGroup',
       createEventGroupDto,
     );
-    return { message: 'Event Group created successfully', data: reply };
+
+    return reply;
   }
 
   findAll() {
