@@ -9,67 +9,44 @@ import {
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { Types } from 'mongoose';
-import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
+import { PaginationDto } from 'src/global/paginated.dto';
 
-@Controller('events')
+@Controller('event')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
-  // Virtual Event CRUD Operations
-  @Post('virtual')
-  async createVirtualEvent(@Body() eventDto: any) {
-    return this.eventService.createVirtualEvent(eventDto);
+  @Post()
+  async createEvent(@Body() eventDto: CreateEventDto) {
+    return this.eventService.createEvent(eventDto);
   }
 
-  @Get('virtual')
-  async getAllVirtualEvents() {
-    return this.eventService.getAllVirtualEvents();
+  @Get()
+  async getAllEvents() {
+    return this.eventService.getAllEvents();
   }
 
-  @Get('virtual/:id')
-  async getVirtualEventById(@Param('id') id: Types.ObjectId) {
-    return this.eventService.getVirtualEventById(id);
+  @Get('paginated')
+  async getPaginatedAndFilteredEvents(@Body() paginationDto: PaginationDto) {
+    return this.eventService.getPaginatedAndFilteredEvents(paginationDto);
   }
 
-  @Put('virtual/:id')
-  async updateVirtualEvent(
+  @Get(':id')
+  async getEventById(@Param('id') id: Types.ObjectId) {
+    return this.eventService.getEventById(id);
+  }
+
+  @Put(':id')
+  async updateEvent(
     @Param('id') id: Types.ObjectId,
-    @Body() eventDto: UpdateVirtualEventDto,
+    @Body() eventDto: UpdateEventDto,
   ) {
-    return this.eventService.updateVirtualEvent(id, eventDto);
+    return this.eventService.updateEvent(id, eventDto);
   }
 
-  @Delete('virtual/:id')
-  async deleteVirtualEvent(@Param('id') id: Types.ObjectId) {
-    return this.eventService.deleteVirtualEvent(id);
-  }
-
-  // Physical Event CRUD Operations
-  @Post('physical')
-  async createPhysicalEvent(@Body() eventDto: any) {
-    return this.eventService.createPhysicalEvent(eventDto);
-  }
-
-  @Get('physical')
-  async getAllPhysicalEvents() {
-    return this.eventService.getAllPhysicalEvents();
-  }
-
-  @Get('physical/:id')
-  async getPhysicalEventById(@Param('id') id: Types.ObjectId) {
-    return this.eventService.getPhysicalEventById(id);
-  }
-
-  @Put('physical/:id')
-  async updatePhysicalEvent(
-    @Param('id') id: Types.ObjectId,
-    @Body() eventDto: any,
-  ) {
-    return this.eventService.updatePhysicalEvent(id, eventDto);
-  }
-
-  @Delete('physical/:id')
-  async deletePhysicalEvent(@Param('id') id: Types.ObjectId) {
-    return this.eventService.deletePhysicalEvent(id);
+  @Delete(':id')
+  async deleteEvent(@Param('id') id: Types.ObjectId) {
+    return this.eventService.deleteEvent(id);
   }
 }

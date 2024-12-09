@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EventModule } from './event/event.module';
 import { EventCategoryModule } from './event-category/event-category.module';
-// import { ClientsModule, Transport } from '@nestjs/microservices';
 import { EventTeamModule } from './event-team/event-team.module';
 
 @Module({

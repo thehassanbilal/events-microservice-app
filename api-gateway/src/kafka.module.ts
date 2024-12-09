@@ -35,15 +35,13 @@ export class KafkaModule implements OnModuleInit {
 
   async onModuleInit() {
     const eventRequestPatterns = [
-      'createEventCategory',
-      'findAllEventCategory',
-      'findAllPaginatedEventCategory',
-      'findOneEventCategory',
-      'updateEventCategory',
-      'deleteEventCategory',
-    ];
+      'createEvent',
+      'findAllEvents',
+      'findOneEvent',
+      'paginateEvents',
+      'updateEvent',
+      'deleteEvent',
 
-    const eventCategoryRequestPatterns = [
       'createVirtualEvent',
       'findAllVirtualEvents',
       'findOneVirtualEvent',
@@ -55,6 +53,15 @@ export class KafkaModule implements OnModuleInit {
       'findOnePhysicalEvent',
       'updatePhysicalEvent',
       'deletePhysicalEvent',
+    ];
+
+    const eventCategoryRequestPatterns = [
+      'createEventCategory',
+      'findAllEventCategory',
+      'findAllPaginatedEventCategory',
+      'findOneEventCategory',
+      'updateEventCategory',
+      'deleteEventCategory',
     ];
 
     const eventTeamRequestPatterns = [

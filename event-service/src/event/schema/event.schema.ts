@@ -1,10 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import {
+  Document,
+  HydratedDocument,
+  Schema as MongooseSchema,
+  Types,
+} from 'mongoose';
 import { EventCategory } from 'src/event-category/schema/event-category.schema';
 import { EventTeam } from 'src/event-team/schema/event-team.schema';
 import { EventStatus } from '../enum/event-status.enum';
-import { PhysicalEvent } from './physical-event.schema';
-import { VirtualEvent } from './virtual-event.schema';
 import { EventTypeEnum } from '../enum/event-type-enum';
 
 export type EventDocument = HydratedDocument<Event>;
@@ -20,7 +23,7 @@ export type EventDocument = HydratedDocument<Event>;
   },
 })
 export class Event extends Document {
-  @Prop({ required: true, enum: EventTypeEnum })
+  @Prop({ required: true, enum: EventTypeEnum, immutable: true })
   eventType: EventTypeEnum;
 
   @Prop()
@@ -38,33 +41,19 @@ export class Event extends Document {
   })
   category: MongooseSchema.Types.ObjectId;
 
-  @Prop({
-    type: MongooseSchema.Types.ObjectId,
-    refPath: 'onModel',
-  })
-  details: MongooseSchema.Types.ObjectId;
-
-  @Prop({
-    enum: [PhysicalEvent.name, VirtualEvent.name],
-    immutable: true,
-  })
-  onModel: string;
-
   @Prop()
   startDate: Date;
 
   @Prop()
   endDate: Date;
 
-  @Prop({
-    type: [String],
-    required: true,
-    validate: (languages: string[]) => languages.length > 0,
-  })
-  languages: string[];
-
   @Prop()
   timezone: string;
+
+  @Prop({
+    type: [Types.ObjectId],
+  })
+  languages: Types.ObjectId[];
 
   @Prop({
     type: [{ from: { type: String }, to: { type: String } }],

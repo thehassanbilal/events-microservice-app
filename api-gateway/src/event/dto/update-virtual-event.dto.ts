@@ -1,16 +1,6 @@
-import {
-  IsDate,
-  IsMongoId,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
-import { Types } from 'mongoose';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateVirtualEventDto {
-  @IsMongoId()
-  id: Types.ObjectId;
-
   @IsOptional()
   @IsString()
   url: string;
@@ -26,39 +16,4 @@ export class UpdateVirtualEventDto {
   @IsOptional()
   @IsString()
   source: string;
-
-  @IsOptional()
-  @IsString()
-  team: string;
-
-  @IsOptional()
-  @IsString()
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  category: string;
-
-  @IsOptional()
-  @IsDate()
-  startDate: Date;
-
-  @IsOptional()
-  @IsDate()
-  endDate: Date;
-
-  @IsOptional()
-  @IsString({ each: true })
-  languages: string[];
-
-  @IsOptional()
-  @IsString()
-  timezone: string;
-
-  @IsOptional()
-  @IsNumber()
-  numberOfBreaks: number;
-
-  @IsOptional()
-  breaks: { from: string; to: string }[];
 }

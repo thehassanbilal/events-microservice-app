@@ -8,6 +8,7 @@ import configuration from 'config/configuration';
 import { Connection } from 'mongoose';
 import { EventCategoryModule } from './event-category/event-category.module';
 import { EventTeamModule } from './event-team/event-team.module';
+import { LanguageModule } from './language/language.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { EventTeamModule } from './event-team/event-team.module';
     EventModule,
     EventCategoryModule,
     EventTeamModule,
+    LanguageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

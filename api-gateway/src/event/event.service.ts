@@ -2,6 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Types } from 'mongoose';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
+import { PaginationDto } from 'src/global/paginated.dto';
 
 @Injectable()
 export class EventService {
@@ -9,7 +12,45 @@ export class EventService {
     @Inject('EVENT_SERVICE') private readonly eventProxyClient: ClientKafka,
   ) {}
 
-  async createVirtualEvent(eventDto: any) {
+  // Event CRUD Operations
+
+  async createEvent(eventDto: CreateEventDto) {
+    return await this.eventProxyClient.send('createEvent', eventDto);
+  }
+
+  async updateEvent(id: Types.ObjectId, eventDto: UpdateEventDto) {
+    const reply = await this.eventProxyClient.send('updateEvent', {
+      id,
+      ...eventDto,
+    });
+    return reply;
+  }
+
+  async getAllEvents() {
+    const reply = await this.eventProxyClient.send('findAllEvents', {});
+    return reply;
+  }
+
+  async getPaginatedAndFilteredEvents(paginationDto: PaginationDto) {
+    const reply = await this.eventProxyClient.send(
+      'paginateEvents',
+      paginationDto,
+    );
+
+    return reply;
+  }
+
+  async getEventById(id: Types.ObjectId) {
+    const reply = await this.eventProxyClient.send('findOneEvent', { id });
+    return reply;
+  }
+
+  async deleteEvent(id: Types.ObjectId) {
+    return await this.eventProxyClient.send('deleteEvent', { id });
+  }
+
+  // Virtual Event CRUD Operations
+  async createVirtualEvent(eventDto: CreateEventDto) {
     const reply = await this.eventProxyClient.send(
       'createVirtualEvent',
       eventDto,

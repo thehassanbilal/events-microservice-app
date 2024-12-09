@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 export type PhysicalEventDocument = HydratedDocument<PhysicalEvent>;
 
@@ -9,15 +9,19 @@ export type PhysicalEventDocument = HydratedDocument<PhysicalEvent>;
   toJSON: {
     transform: (doc, ret) => {
       delete ret.updatedAt;
+      delete ret.event;
     },
   },
 })
 export class PhysicalEvent {
-  @Prop({ required: true })
+  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
+  event: MongooseSchema.Types.ObjectId;
+
+  @Prop()
   venue: string;
 
-  @Prop({ type: [String], required: true })
-  attendees: string[];
+  @Prop({ type: [MongooseSchema.Types.ObjectId] })
+  attendees: MongooseSchema.Types.ObjectId[];
 }
 
 export const PhysicalEventSchema = SchemaFactory.createForClass(PhysicalEvent);

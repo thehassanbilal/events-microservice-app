@@ -11,15 +11,22 @@ import {
   PhysicalEventSchema,
 } from './schema/physical-event.schema';
 import { PhysicalEventController } from './physical-event.controller';
+import { Event, EventSchema } from './schema/event.schema';
+import { EventController } from './event.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
+      { name: Event.name, schema: EventSchema },
       { name: VirtualEvent.name, schema: VirtualEventSchema },
       { name: PhysicalEvent.name, schema: PhysicalEventSchema },
     ]),
   ],
-  controllers: [VirtualEventController, PhysicalEventController],
+  controllers: [
+    EventController,
+    VirtualEventController,
+    PhysicalEventController,
+  ],
   providers: [EventService],
 })
 export class EventModule {}
