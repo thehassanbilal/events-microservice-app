@@ -17,6 +17,8 @@ import { paginateWithMongoose } from 'src/pagination/pagination.service';
 import { Event, EventDocument } from './schema/event.schema';
 import { EventTypeEnum } from './enum/event-type-enum';
 import { NotFoundError } from 'rxjs';
+import { ZoomService } from './zoom.service';
+import { GoogleMeetService } from './google-meet.service';
 
 @Injectable()
 export class EventService {
@@ -29,6 +31,8 @@ export class EventService {
     private virtualEventModel: Model<VirtualEventDocument>,
     @InjectModel(PhysicalEvent.name)
     private physicalEventModel: Model<PhysicalEventDocument>,
+    private readonly zoomService: ZoomService,
+    private readonly googleMeetService: GoogleMeetService,
   ) {}
 
   // CRUD Operations for Events
@@ -97,12 +101,6 @@ export class EventService {
 
   // CRUD Operations for Virtual Events
 
-  async createVirtualEvent(eventDto: any) {
-    const newEvent = new this.virtualEventModel(eventDto);
-    await newEvent.save();
-    return newEvent;
-  }
-
   async updateVirtualEvent(eventDto: UpdateVirtualEventDto) {
     const { id, ...rest } = eventDto;
 
@@ -129,11 +127,6 @@ export class EventService {
   }
 
   // CRUD Operations for Physical Events
-  async createPhysicalEvent(eventDto: any) {
-    const newEvent = new this.physicalEventModel(eventDto);
-    await newEvent.save();
-    return newEvent;
-  }
 
   async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
     const updatedEvent = await this.physicalEventModel.findByIdAndUpdate(

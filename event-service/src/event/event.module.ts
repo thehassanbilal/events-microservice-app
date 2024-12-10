@@ -13,6 +13,8 @@ import {
 import { PhysicalEventController } from './physical-event.controller';
 import { Event, EventSchema } from './schema/event.schema';
 import { EventController } from './event.controller';
+import { ZoomService } from './zoom.service';
+import { GoogleMeetService } from './google-meet.service';
 
 @Module({
   imports: [
@@ -27,6 +29,6 @@ import { EventController } from './event.controller';
     VirtualEventController,
     PhysicalEventController,
   ],
-  providers: [EventService],
+  providers: [EventService, ZoomService, GoogleMeetService],
 })
 export class EventModule {}

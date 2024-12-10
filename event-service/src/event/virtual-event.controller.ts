@@ -8,13 +8,9 @@ import { Types } from 'mongoose';
 export class VirtualEventController {
   constructor(private readonly eventService: EventService) {}
 
-  @MessagePattern('createVirtualEvent')
-  async createVirtualEvent(@Payload() eventDto: any) {
-    return this.eventService.createVirtualEvent(eventDto);
-  }
-
   @MessagePattern('findAllVirtualEvents')
   async getAllVirtualEvents() {
+    console.log('here is data from virtual event controller');
     return this.eventService.getAllVirtualEvents();
   }
 

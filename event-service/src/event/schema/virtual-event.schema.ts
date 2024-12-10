@@ -18,6 +18,11 @@ export class VirtualEvent {
   @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
   event: MongooseSchema.Types.ObjectId;
 
+  @Prop({
+    enum: VirtualEventSource,
+  })
+  source: VirtualEventSource;
+
   @Prop()
   url: string;
 
@@ -26,11 +31,6 @@ export class VirtualEvent {
 
   @Prop()
   passcode: string;
-
-  @Prop({
-    enum: VirtualEventSource,
-  })
-  source: VirtualEventSource;
 }
 
 export const VirtualEventSchema = SchemaFactory.createForClass(VirtualEvent);

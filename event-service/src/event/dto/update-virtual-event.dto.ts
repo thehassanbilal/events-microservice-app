@@ -1,11 +1,13 @@
 import {
   IsDate,
+  IsEnum,
   IsMongoId,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 import { Types } from 'mongoose';
+import { VirtualEventSource } from '../enum/virtualEventSource.enum';
 
 export class UpdateVirtualEventDto {
   @IsMongoId()
@@ -24,8 +26,8 @@ export class UpdateVirtualEventDto {
   passcode: string;
 
   @IsOptional()
-  @IsString()
-  source: string;
+  @IsEnum(VirtualEventSource)
+  source: VirtualEventSource;
 
   @IsOptional()
   @IsString()

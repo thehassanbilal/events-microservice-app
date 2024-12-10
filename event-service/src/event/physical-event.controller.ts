@@ -7,11 +7,6 @@ import { Types } from 'mongoose';
 export class PhysicalEventController {
   constructor(private readonly eventService: EventService) {}
 
-  @MessagePattern('createPhysicalEvent')
-  async createPhysicalEvent(@Payload() eventDto: any) {
-    return this.eventService.createPhysicalEvent(eventDto);
-  }
-
   @MessagePattern('findAllPhysicalEvents')
   async getAllPhysicalEvents() {
     return this.eventService.getAllPhysicalEvents();

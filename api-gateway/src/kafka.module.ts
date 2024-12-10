@@ -42,13 +42,11 @@ export class KafkaModule implements OnModuleInit {
       'updateEvent',
       'deleteEvent',
 
-      'createVirtualEvent',
       'findAllVirtualEvents',
       'findOneVirtualEvent',
       'updateVirtualEvent',
       'deleteVirtualEvent',
 
-      'createPhysicalEvent',
       'findAllPhysicalEvents',
       'findOnePhysicalEvent',
       'updatePhysicalEvent',
