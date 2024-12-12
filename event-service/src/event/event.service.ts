@@ -19,6 +19,7 @@ import { EventTypeEnum } from './enum/event-type-enum';
 import { NotFoundError } from 'rxjs';
 import { ZoomService } from './zoom.service';
 import { GoogleMeetService } from './google-meet.service';
+import { VirtualEventSource } from './enum/virtualEventSource.enum';
 
 @Injectable()
 export class EventService {
@@ -103,6 +104,15 @@ export class EventService {
 
   async updateVirtualEvent(eventDto: UpdateVirtualEventDto) {
     const { id, ...rest } = eventDto;
+
+    const hasSourceChanged = rest.source !== undefined;
+
+    if (hasSourceChanged) {
+      const isZoom = rest.source === VirtualEventSource.ZOOM;
+      if (isZoom) {
+        await this.zoomService.createZoomMeeting();
+      }
+    }
 
     const updatedEvent = await this.virtualEventModel.findByIdAndUpdate(
       id,

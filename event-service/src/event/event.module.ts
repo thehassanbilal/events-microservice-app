@@ -15,6 +15,7 @@ import { Event, EventSchema } from './schema/event.schema';
 import { EventController } from './event.controller';
 import { ZoomService } from './zoom.service';
 import { GoogleMeetService } from './google-meet.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { GoogleMeetService } from './google-meet.service';
     VirtualEventController,
     PhysicalEventController,
   ],
-  providers: [EventService, ZoomService, GoogleMeetService],
+  providers: [EventService, ZoomService, GoogleMeetService, ConfigService],
 })
 export class EventModule {}
