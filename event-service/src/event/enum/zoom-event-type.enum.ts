@@ -1,0 +1,5 @@
+export enum ZoomEventType {
+  CONFERENCE = 'CONFERENCE',
+  SIMPLE_EVENT = 'SIMPLE_EVENT',
+  RECURRING = 'RECURRING',
+}

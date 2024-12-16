@@ -110,7 +110,7 @@ export class EventService {
     if (hasSourceChanged) {
       const isZoom = rest.source === VirtualEventSource.ZOOM;
       if (isZoom) {
-        await this.zoomService.createZoomMeeting();
+        await this.zoomService.createZoomEvent();
       }
     }
 
