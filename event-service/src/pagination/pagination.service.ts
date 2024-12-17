@@ -6,6 +6,7 @@ export async function paginateWithMongoose<T>(
   model: Model<T>,
   { page, limit, sort, filter }: PaginationDto,
   query: object = {},
+  populate: any[] = [],
 ) {
   page = Math.max(1, page || 1);
   limit = Math.max(1, Math.min(100, limit || 10));
@@ -21,6 +22,12 @@ export async function paginateWithMongoose<T>(
     queryBuilder.where('name').regex(new RegExp(filter, 'i'));
   }
 
+  if (populate.length > 0) {
+    populate.forEach((pop) => {
+      queryBuilder.populate(pop);
+    });
+  }
+
   const records = await queryBuilder.skip(skip).limit(limit).exec();
   const totalRecords = await model.countDocuments(query).exec();
   const totalPages = Math.ceil(totalRecords / limit);
@@ -30,7 +37,7 @@ export async function paginateWithMongoose<T>(
       page,
       limit,
       totalRecords,
-      totalPages: totalPages,
+      totalPages,
       records,
     },
   };

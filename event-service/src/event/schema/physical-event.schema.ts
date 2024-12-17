@@ -23,6 +23,9 @@ export class PhysicalEvent {
 
   @Prop({ type: [MongooseSchema.Types.ObjectId] })
   attendees: MongooseSchema.Types.ObjectId[];
+
+  @Prop({ default: null })
+  deletedAt: Date;
 }
 
 export const PhysicalEventSchema = SchemaFactory.createForClass(PhysicalEvent);

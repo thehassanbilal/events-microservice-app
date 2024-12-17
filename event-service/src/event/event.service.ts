@@ -67,13 +67,26 @@ export class EventService {
   }
 
   async getEventById(id: Types.ObjectId): Promise<any> {
-    const event = await this.eventModel.findById(id);
+    const event = await this.eventModel.findById(id).populate([
+      {
+        path: 'team',
+        select: '_id name',
+      },
+      {
+        path: 'category',
+        select: '_id name',
+      },
+      {
+        path: 'languages',
+        select: '_id name countryCode',
+      },
+    ]);
 
     if (!event) {
       throw new NotFoundError('Event not found');
     }
 
-    const eventDetails = await this.getEventDetails(id, event.eventType);
+    const eventDetails = await this.getEventDetails(id);
 
     return {
       ...event.toObject(),
@@ -82,7 +95,17 @@ export class EventService {
   }
 
   async getPaginatedAndFilteredEvents(paginationDto: PaginationDto) {
-    const result = await paginateWithMongoose(this.eventModel, paginationDto);
+    const result = await paginateWithMongoose(
+      this.eventModel,
+      paginationDto,
+      {},
+      [
+        {
+          path: 'languages',
+          select: '_id name countryCode',
+        },
+      ],
+    );
     return result;
   }
 
@@ -118,39 +141,8 @@ export class EventService {
     }
 
     await this.updateMeetingOnThridPartyService(event, eventDto);
-  }
 
-  async createMeetingOnThridPartyService(eventDto: UpdateVirtualEventDto) {
-    const { source, startTime } = eventDto;
-
-    let createdMeeting;
-    switch (source) {
-      case VirtualEventSource.ZOOM:
-        const createdZoomMetting = await this.zoomService.createZoomMeeting({
-          startTime,
-        });
-        createdMeeting = {
-          meetingId: createdZoomMetting.id,
-        };
-        break;
-    }
-
-    return createdMeeting;
-  }
-
-  async updateMeetingOnThridPartyService(
-    virtualEvent: VirtualEventDocument,
-    eventDto: UpdateVirtualEventDto,
-  ) {
-    const { source, meetingId } = virtualEvent;
-
-    switch (source) {
-      case VirtualEventSource.ZOOM:
-        await this.zoomService.updateZoomMeeting(meetingId, {
-          start_time: eventDto.startTime,
-        });
-        break;
-    }
+    return { message: 'Event updated successfully', event: event.toObject() };
   }
 
   async deleteVirtualEvent(id: Types.ObjectId) {
@@ -218,17 +210,77 @@ export class EventService {
     return deletedEvent;
   }
 
-  // Helper Methods
+  // Third Party Meeting Methods
 
-  private async getEventDetails(
-    eventId: Types.ObjectId,
-    eventType: EventTypeEnum,
-  ): Promise<any> {
-    if (eventType === EventTypeEnum.VIRTUAL) {
-      return this.virtualEventModel.findOne({ event: eventId }).lean();
+  async createMeetingOnThridPartyService(eventDto: UpdateVirtualEventDto) {
+    const { source, startTime } = eventDto;
+
+    let createdMeeting;
+    switch (source) {
+      case VirtualEventSource.ZOOM:
+        const createdZoomMetting = await this.zoomService.createZoomMeeting({
+          startTime,
+        });
+        createdMeeting = {
+          meetingId: createdZoomMetting.id,
+        };
+        break;
     }
 
-    if (eventType === EventTypeEnum.PHYSICAL) {
+    return createdMeeting;
+  }
+
+  async updateMeetingOnThridPartyService(
+    virtualEvent: VirtualEventDocument,
+    eventDto: UpdateVirtualEventDto,
+  ) {
+    const { source, meetingId } = virtualEvent;
+
+    switch (source) {
+      case VirtualEventSource.ZOOM:
+        await this.zoomService.updateZoomMeeting(meetingId, {
+          start_time: eventDto.startTime,
+        });
+        break;
+    }
+  }
+
+  async getThirdPartyMeetingDetails(eventId: Types.ObjectId) {
+    const virtualEventRecord = await this.virtualEventModel
+      .findOne({ event: eventId })
+      .lean();
+
+    const { source, meetingId } = virtualEventRecord;
+
+    switch (source) {
+      case VirtualEventSource.ZOOM:
+        return this.zoomService.getZoomMeetingById(meetingId);
+    }
+  }
+
+  // Helper Methods
+
+  private async getEventDetails(eventId: Types.ObjectId): Promise<any> {
+    const event = await this.eventModel.findById(eventId);
+    const isVirtual = event.eventType === EventTypeEnum.VIRTUAL;
+    const isPhysical = event.eventType === EventTypeEnum.PHYSICAL;
+
+    if (isVirtual) {
+      const thirdPartyMeetingDetails =
+        await this.getThirdPartyMeetingDetails(eventId);
+      const details = {
+        id: thirdPartyMeetingDetails.id,
+        topic: thirdPartyMeetingDetails.topic,
+        start_time: thirdPartyMeetingDetails.start_time,
+        join_url: thirdPartyMeetingDetails.join_url,
+        password: thirdPartyMeetingDetails.password,
+        duration: thirdPartyMeetingDetails.duration,
+        hostEmail: thirdPartyMeetingDetails.host_email,
+      };
+      return details;
+    }
+
+    if (isPhysical) {
       return this.physicalEventModel.findOne({ event: eventId }).lean();
     }
 

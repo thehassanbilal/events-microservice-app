@@ -1,13 +1,18 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
-import { zoomWebhooksApiPaths } from './webhook-paths/zoom-webhooks-api-paths';
 import { CreateZoomMeetingDto } from './dto/create-zoom-meeting.dto';
 import { UpdateZoomMeetingDto } from './dto/update-zoom-meeting.dto';
 
 @Injectable()
 export class ZoomService {
   constructor(private readonly configService: ConfigService) {}
+
+  private getAuth0Token = 'https://zoom.us/oauth/token';
+  private getMeetings = `https://api.zoom.us/v2/users/me/meetings`;
+  private getMeetingById = (meetingId: string) =>
+    `https://api.zoom.us/v2/meetings/${meetingId}`;
+  private getEvents = 'https://api.zoom.us/zoom_events/events';
 
   private readonly logger = new Logger(ZoomService.name);
   private zoomOAuthToken: { token: string; expiresAt: number } | null = null;
@@ -35,7 +40,7 @@ export class ZoomService {
         'base64',
       );
       const response = await axios.post(
-        `${zoomWebhooksApiPaths.getAuth0Token}`,
+        `${this.getAuth0Token}`,
         `grant_type=account_credentials&account_id=${accountId}`,
         {
           headers: {
@@ -108,7 +113,7 @@ export class ZoomService {
       this.logger.debug('Updating Zoom meeting with payload:', updateData);
 
       const response = await axios.patch(
-        zoomWebhooksApiPaths.meetings('me', meetingId),
+        this.getMeetingById(meetingId),
         updateData,
         {
           headers: {
@@ -120,11 +125,7 @@ export class ZoomService {
 
       this.logger.log(`Zoom meeting updated successfully: ${response.data.id}`);
 
-      return {
-        url: response.data.join_url,
-        meetingId: response.data.id,
-        passcode: response.data.password,
-      };
+      return response.data;
     } catch (error) {
       this.logger.error('Failed to update Zoom meeting', {
         message: error.message,
@@ -144,7 +145,8 @@ export class ZoomService {
       this.logger.debug('Fetching Zoom meeting:', meetingId);
 
       const response = await axios.get(
-        zoomWebhooksApiPaths.meetings('me', meetingId),
+        // zoomWebhooksApiPaths.meetings('me', meetingId),
+        `https://api.zoom.us/v2/meetings/${meetingId}`,
         {
           headers: {
             Authorization: `Bearer ${zoomOAuthToken}`,
@@ -174,7 +176,7 @@ export class ZoomService {
 
       this.logger.debug('Fetching all Zoom meetings');
 
-      const response = await axios.get(zoomWebhooksApiPaths.meetings('me'), {
+      const response = await axios.get(this.getMeetings, {
         headers: {
           Authorization: `Bearer ${zoomOAuthToken}`,
           'Content-Type': 'application/json',
@@ -202,15 +204,12 @@ export class ZoomService {
 
       this.logger.debug('Deleting Zoom meeting:', meetingId);
 
-      const response = await axios.delete(
-        zoomWebhooksApiPaths.meetings('me', meetingId),
-        {
-          headers: {
-            Authorization: `Bearer ${zoomOAuthToken}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.delete(this.getMeetingById(meetingId), {
+        headers: {
+          Authorization: `Bearer ${zoomOAuthToken}`,
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       this.logger.log(`Zoom meeting deleted successfully: ${meetingId}`);
 
@@ -251,16 +250,12 @@ export class ZoomService {
 
       this.logger.debug('Creating Zoom event with payload:', eventData);
 
-      const response = await axios.post(
-        zoomWebhooksApiPaths.events,
-        eventData,
-        {
-          headers: {
-            Authorization: `Bearer ${zoomOAuthToken}`,
-            'Content-Type': 'application/json',
-          },
+      const response = await axios.post(this.getEvents, eventData, {
+        headers: {
+          Authorization: `Bearer ${zoomOAuthToken}`,
+          'Content-Type': 'application/json',
         },
-      );
+      });
 
       this.logger.log(`Zoom event created successfully: ${response.data.id}`);
 

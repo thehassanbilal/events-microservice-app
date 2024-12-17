@@ -8,6 +8,7 @@ export type EventCategoryDocument = EventCategory & Document;
   toJSON: {
     transform: (doc, ret) => {
       delete ret.updatedAt;
+      delete ret.deletedAt;
     },
   },
 })

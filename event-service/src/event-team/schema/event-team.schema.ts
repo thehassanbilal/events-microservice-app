@@ -8,6 +8,7 @@ export type EventTeamDocument = EventTeam & Document;
   toJSON: {
     transform: (doc, ret) => {
       delete ret.updatedAt;
+      delete ret.deletedAt;
     },
   },
 })
