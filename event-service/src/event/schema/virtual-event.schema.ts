@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { VirtualEventSource } from '../enum/virtualEventSource.enum';
+import { VirtualEventSource } from '../enum/virtual-event-source.enum';
 
 export type VirtualEventDocument = HydratedDocument<VirtualEvent>;
 
@@ -9,8 +9,9 @@ export type VirtualEventDocument = HydratedDocument<VirtualEvent>;
   versionKey: false,
   toJSON: {
     transform: (doc, ret) => {
-      delete ret.updatedAt;
       delete ret.event;
+      delete ret.updatedAt;
+      delete ret.deletedAt;
     },
   },
 })
@@ -24,13 +25,10 @@ export class VirtualEvent {
   source: VirtualEventSource;
 
   @Prop()
-  url: string;
-
-  @Prop()
   meetingId: string;
 
-  @Prop()
-  passcode: string;
+  @Prop({ default: null })
+  deletedAt: Date;
 }
 
 export const VirtualEventSchema = SchemaFactory.createForClass(VirtualEvent);

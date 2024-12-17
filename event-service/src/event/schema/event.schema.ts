@@ -26,9 +26,6 @@ export class Event extends Document {
   @Prop({ required: true, enum: EventTypeEnum, immutable: true })
   eventType: EventTypeEnum;
 
-  @Prop()
-  title: string;
-
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     ref: EventTeam.name,
@@ -40,15 +37,6 @@ export class Event extends Document {
     ref: EventCategory.name,
   })
   category: MongooseSchema.Types.ObjectId;
-
-  @Prop()
-  startDate: Date;
-
-  @Prop()
-  endDate: Date;
-
-  @Prop()
-  timezone: string;
 
   @Prop({
     type: [Types.ObjectId],

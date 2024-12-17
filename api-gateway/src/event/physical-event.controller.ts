@@ -10,7 +10,7 @@ import {
 import { EventService } from './event.service';
 import { Types } from 'mongoose';
 
-@Controller('event/physical')
+@Controller('physical')
 export class PhysicalEventController {
   constructor(private readonly eventService: EventService) {}
 

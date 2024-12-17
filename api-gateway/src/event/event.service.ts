@@ -66,6 +66,16 @@ export class EventService {
     return this.eventProxyClient.send('findOneVirtualEvent', { id });
   }
 
+  async getPaginatedAndFilteredVirtualEvents(paginationDto: PaginationDto) {
+    const reply = await this.eventProxyClient.send(
+      'paginatedAndFilteredVirtualEvents',
+      {
+        paginationDto,
+      },
+    );
+    return reply;
+  }
+
   async updateVirtualEvent(
     id: Types.ObjectId,
     eventDto: UpdateVirtualEventDto,

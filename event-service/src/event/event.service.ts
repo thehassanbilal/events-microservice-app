@@ -19,7 +19,7 @@ import { EventTypeEnum } from './enum/event-type-enum';
 import { NotFoundError } from 'rxjs';
 import { ZoomService } from './zoom.service';
 import { GoogleMeetService } from './google-meet.service';
-import { VirtualEventSource } from './enum/virtualEventSource.enum';
+import { VirtualEventSource } from './enum/virtual-event-source.enum';
 
 @Injectable()
 export class EventService {
@@ -44,19 +44,10 @@ export class EventService {
     const isVirtual = eventDto.eventType === EventTypeEnum.VIRTUAL;
 
     if (isVirtual) {
-      const virtualEvent = new this.virtualEventModel({
-        ...eventDto,
-        event: newEvent._id,
-      });
-      await virtualEvent.save();
+      await this.createVirtualEvent(newEvent._id as Types.ObjectId);
     } else {
-      const physicalEvent = new this.physicalEventModel({
-        ...eventDto,
-        event: newEvent._id,
-      });
-      await physicalEvent.save();
+      await this.createPhysicalEvent(newEvent._id as Types.ObjectId);
     }
-
     return newEvent.toObject();
   }
 
@@ -102,34 +93,85 @@ export class EventService {
 
   // CRUD Operations for Virtual Events
 
+  async createVirtualEvent(eventId: Types.ObjectId) {
+    const newVirtualEvent = await this.virtualEventModel.create({
+      event: eventId,
+    });
+
+    return newVirtualEvent.toObject();
+  }
+
   async updateVirtualEvent(eventDto: UpdateVirtualEventDto) {
     const { id, ...rest } = eventDto;
 
-    const hasSourceChanged = rest.source !== undefined;
+    const event = await this.virtualEventModel.findById(id);
 
-    if (hasSourceChanged) {
-      const isZoom = rest.source === VirtualEventSource.ZOOM;
-      if (isZoom) {
-        await this.zoomService.createZoomEvent();
-      }
+    if (eventDto.source) {
+      const createdMeeting =
+        await this.createMeetingOnThridPartyService(eventDto);
+      const updatedEvent = await this.virtualEventModel.findByIdAndUpdate(
+        id,
+        { ...rest, meetingId: createdMeeting.meetingId },
+        { new: true },
+      );
+      return updatedEvent.toObject();
     }
 
-    const updatedEvent = await this.virtualEventModel.findByIdAndUpdate(
-      id,
-      rest,
-      { new: true },
-    );
+    await this.updateMeetingOnThridPartyService(event, eventDto);
+  }
 
-    return updatedEvent.toObject();
+  async createMeetingOnThridPartyService(eventDto: UpdateVirtualEventDto) {
+    const { source, startTime } = eventDto;
+
+    let createdMeeting;
+    switch (source) {
+      case VirtualEventSource.ZOOM:
+        const createdZoomMetting = await this.zoomService.createZoomMeeting({
+          startTime,
+        });
+        createdMeeting = {
+          meetingId: createdZoomMetting.id,
+        };
+        break;
+    }
+
+    return createdMeeting;
+  }
+
+  async updateMeetingOnThridPartyService(
+    virtualEvent: VirtualEventDocument,
+    eventDto: UpdateVirtualEventDto,
+  ) {
+    const { source, meetingId } = virtualEvent;
+
+    switch (source) {
+      case VirtualEventSource.ZOOM:
+        await this.zoomService.updateZoomMeeting(meetingId, {
+          start_time: eventDto.startTime,
+        });
+        break;
+    }
   }
 
   async deleteVirtualEvent(id: Types.ObjectId) {
-    const deletedEvent = await this.virtualEventModel.findByIdAndDelete(id);
+    const deletedEvent = await this.virtualEventModel.findByIdAndUpdate(
+      id,
+      { deletedAt: new Date() },
+      { new: true },
+    );
+
+    switch (deletedEvent.source) {
+      case VirtualEventSource.ZOOM:
+        await this.zoomService.deleteZoomMeeting(deletedEvent.meetingId);
+        break;
+    }
     return deletedEvent;
   }
 
   async getAllVirtualEvents() {
-    return this.virtualEventModel.find();
+    const events = await this.virtualEventModel.find();
+
+    return events;
   }
 
   async getVirtualEventById(id: Types.ObjectId) {
@@ -137,6 +179,14 @@ export class EventService {
   }
 
   // CRUD Operations for Physical Events
+
+  async createPhysicalEvent(eventId: Types.ObjectId) {
+    const newPhysicalEvent = await this.physicalEventModel.create({
+      event: eventId,
+    });
+
+    return newPhysicalEvent.toObject();
+  }
 
   async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
     const updatedEvent = await this.physicalEventModel.findByIdAndUpdate(
@@ -147,9 +197,12 @@ export class EventService {
     return updatedEvent;
   }
 
-  async deletePhysicalEvent(id: Types.ObjectId) {
-    const deletedEvent = await this.physicalEventModel.findByIdAndDelete(id);
-    return deletedEvent;
+  async getPaginatedAndFilteredVirtualEvents(paginationDto: PaginationDto) {
+    const result = await paginateWithMongoose(
+      this.virtualEventModel,
+      paginationDto,
+    );
+    return result;
   }
 
   async getAllPhysicalEvents() {
@@ -158,6 +211,11 @@ export class EventService {
 
   async getPhysicalEventById(id: Types.ObjectId) {
     return this.physicalEventModel.findById(id);
+  }
+
+  async deletePhysicalEvent(id: Types.ObjectId) {
+    const deletedEvent = await this.physicalEventModel.findByIdAndDelete(id);
+    return deletedEvent;
   }
 
   // Helper Methods

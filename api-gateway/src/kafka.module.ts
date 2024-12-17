@@ -44,6 +44,7 @@ export class KafkaModule implements OnModuleInit {
 
       'findAllVirtualEvents',
       'findOneVirtualEvent',
+      'paginatedAndFilteredVirtualEvents',
       'updateVirtualEvent',
       'deleteVirtualEvent',
 

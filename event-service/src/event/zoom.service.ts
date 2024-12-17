@@ -65,37 +65,19 @@ export class ZoomService {
     }
   }
 
-  async createZoomMeeting(createZoomMeetingDto: CreateZoomMeetingDto) {
+  async createZoomMeeting(createZoomMeetingDto?: CreateZoomMeetingDto) {
     try {
       const zoomOAuthToken = await this.getZoomOAuthToken();
 
-      const {
-        topic,
-        type,
-        start_time,
-        duration,
-        timezone,
-        password,
-        agenda,
-        settings,
-      } = createZoomMeetingDto;
-
-      const meetingData = {
-        topic,
-        type,
-        start_time,
-        duration,
-        timezone,
-        password,
-        agenda,
-        settings,
-      };
-
-      this.logger.debug('Creating Zoom meeting with payload:', meetingData);
+      this.logger.debug(
+        'Creating Zoom meeting with payload:',
+        createZoomMeetingDto,
+      );
 
       const response = await axios.post(
-        zoomWebhooksApiPaths.meetings('me'),
-        meetingData,
+        // zoomWebhooksApiPaths.meetings('me'),
+        `https://api.zoom.us/v2/users/me/meetings`,
+        createZoomMeetingDto,
         {
           headers: {
             Authorization: `Bearer ${zoomOAuthToken}`,
@@ -106,11 +88,7 @@ export class ZoomService {
 
       this.logger.log(`Zoom meeting created successfully: ${response.data.id}`);
 
-      return {
-        url: response.data.join_url,
-        meetingId: response.data.id,
-        passcode: response.data.password,
-      };
+      return response.data;
     } catch (error) {
       this.logger.error('Failed to create Zoom meeting', {
         message: error.message,

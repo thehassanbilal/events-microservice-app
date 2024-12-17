@@ -10,8 +10,9 @@ import {
 import { EventService } from './event.service';
 import { Types } from 'mongoose';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
+import { PaginationDto } from 'src/global/paginated.dto';
 
-@Controller('event/virtual')
+@Controller('virtual')
 export class VirtualEventController {
   constructor(private readonly eventService: EventService) {}
 
@@ -23,6 +24,15 @@ export class VirtualEventController {
   @Get()
   async getAllVirtualEvents() {
     return this.eventService.getAllVirtualEvents();
+  }
+
+  @Get('paginated')
+  async getPaginatedAndFilteredVirtualEvents(
+    @Body() paginationDto: PaginationDto,
+  ) {
+    return this.eventService.getPaginatedAndFilteredVirtualEvents(
+      paginationDto,
+    );
   }
 
   @Get(':id')

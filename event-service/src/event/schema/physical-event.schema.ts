@@ -8,8 +8,9 @@ export type PhysicalEventDocument = HydratedDocument<PhysicalEvent>;
   versionKey: false,
   toJSON: {
     transform: (doc, ret) => {
-      delete ret.updatedAt;
       delete ret.event;
+      delete ret.updatedAt;
+      delete ret.deletedAt;
     },
   },
 })

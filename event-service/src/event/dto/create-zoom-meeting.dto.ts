@@ -1,20 +1,24 @@
 import { IsString, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 
 export class CreateZoomMeetingDto {
+  @IsOptional()
   @IsString()
-  topic: string;
+  topic?: string;
 
+  @IsOptional()
   @IsNumber()
-  type: number;
+  type?: number;
 
   @IsString()
-  start_time: string;
+  startTime: string;
 
+  @IsOptional()
   @IsNumber()
-  duration: number;
+  duration?: number;
 
+  @IsOptional()
   @IsString()
-  timezone: string;
+  timezone?: string;
 
   @IsOptional()
   @IsString()

@@ -1,4 +1,5 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { VirtualEventSource } from '../enum/virtual-event-source.enum';
 
 export class UpdateVirtualEventDto {
   @IsOptional()
@@ -14,6 +15,6 @@ export class UpdateVirtualEventDto {
   passcode: string;
 
   @IsOptional()
-  @IsString()
-  source: string;
+  @IsEnum(VirtualEventSource)
+  source: VirtualEventSource;
 }

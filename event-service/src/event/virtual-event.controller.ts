@@ -3,6 +3,7 @@ import { EventService } from './event.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 import { Types } from 'mongoose';
+import { PaginationDto } from 'src/global/pagination.dto';
 
 @Controller('events/virtual')
 export class VirtualEventController {
@@ -10,8 +11,16 @@ export class VirtualEventController {
 
   @MessagePattern('findAllVirtualEvents')
   async getAllVirtualEvents() {
-    console.log('here is data from virtual event controller');
     return this.eventService.getAllVirtualEvents();
+  }
+
+  @MessagePattern('paginatedAndFilteredVirtualEvents')
+  async getPaginatedAndFilteredVirtualEvents(
+    @Payload() paginationDto: PaginationDto,
+  ) {
+    return this.eventService.getPaginatedAndFilteredVirtualEvents(
+      paginationDto,
+    );
   }
 
   @MessagePattern('findOneVirtualEvent')
