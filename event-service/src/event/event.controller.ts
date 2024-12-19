@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { EventService } from './event.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { Types } from 'mongoose';
-import { UpdateEventDto } from './dto/update-event.dto copy';
+import { UpdateEventDto } from './dto/update-event.dto';
 import { PaginationDto } from 'src/global/pagination.dto';
 import { CreateEventDto } from './dto/create-event.dto';
 

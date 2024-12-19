@@ -16,4 +16,16 @@ export class UpdateVirtualEventDto {
   @IsOptional()
   @IsEnum(VirtualEventSource)
   source: VirtualEventSource;
+
+  @IsOptional()
+  @IsString()
+  endTime: string;
+
+  @IsOptional()
+  @IsString()
+  timeZone: string;
+
+  @IsOptional()
+  @IsString()
+  summary: string;
 }

@@ -12,7 +12,7 @@ import {
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 import { PaginationDto } from 'src/global/pagination.dto';
 import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto copy';
+import { UpdateEventDto } from './dto/update-event.dto';
 import { paginateWithMongoose } from 'src/pagination/pagination.service';
 import { Event, EventDocument } from './schema/event.schema';
 import { EventTypeEnum } from './enum/event-type-enum';
@@ -156,6 +156,9 @@ export class EventService {
       case VirtualEventSource.ZOOM:
         await this.zoomService.deleteZoomMeeting(deletedEvent.meetingId);
         break;
+      case VirtualEventSource.GOOGLE_MEET:
+        await this.googleMeetService.deleteGoogleMeet(deletedEvent.meetingId);
+        break;
     }
     return deletedEvent;
   }
@@ -225,6 +228,19 @@ export class EventService {
           meetingId: createdZoomMetting.id,
         };
         break;
+      case VirtualEventSource.GOOGLE_MEET:
+        const createdGoogleMeet = await this.googleMeetService.createGoogleMeet(
+          {
+            summary: eventDto.summary,
+            startTime,
+            endTime: eventDto.endTime,
+            timeZone: eventDto.timeZone,
+          },
+        );
+        createdMeeting = {
+          meetingId: createdGoogleMeet.meetingId,
+        };
+        break;
     }
 
     return createdMeeting;
@@ -242,6 +258,14 @@ export class EventService {
           start_time: eventDto.startTime,
         });
         break;
+      case VirtualEventSource.GOOGLE_MEET:
+        await this.googleMeetService.updateGoogleMeet(meetingId, {
+          summary: eventDto.summary,
+          startTime: eventDto.startTime,
+          endTime: eventDto.endTime,
+          timeZone: eventDto.timeZone,
+        });
+        break;
     }
   }
 
@@ -255,6 +279,8 @@ export class EventService {
     switch (source) {
       case VirtualEventSource.ZOOM:
         return this.zoomService.getZoomMeetingById(meetingId);
+      case VirtualEventSource.GOOGLE_MEET:
+        return this.googleMeetService.getGoogleMeetById(meetingId);
     }
   }
 
