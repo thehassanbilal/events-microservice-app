@@ -280,7 +280,7 @@ export class EventService {
       case VirtualEventSource.ZOOM:
         return this.zoomService.getZoomMeetingById(meetingId);
       case VirtualEventSource.GOOGLE_MEET:
-        return this.googleMeetService.getGoogleMeetById(meetingId);
+        return this.googleMeetService.getGoogleMeet(meetingId);
     }
   }
 
