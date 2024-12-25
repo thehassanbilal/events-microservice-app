@@ -48,7 +48,7 @@ export class GoogleMeetService {
         conferenceData: {
           createRequest: {
             requestId,
-            conferenceSolutionKey: { type: 'eventNamedHangout' },
+            conferenceSolutionKey: { type: 'hangoutsMeet' },
           },
         },
         start: {
