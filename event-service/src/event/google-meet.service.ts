@@ -43,29 +43,26 @@ export class GoogleMeetService {
       const calendar = google.calendar('v3');
       const requestId = crypto.randomBytes(16).toString('hex');
 
-      const sixtyMinutesFromStart = new Date(
-        new Date(createGoogleMeetDto.startTime).getTime() + 60 * 60 * 1000,
-      ).toISOString();
-
       const event = {
         summary: createGoogleMeetDto.summary,
-        description: createGoogleMeetDto.description,
+        conferenceData: {
+          createRequest: {
+            requestId,
+            conferenceSolutionKey: { type: 'hangoutsMeet' },
+          },
+        },
         start: {
           dateTime: createGoogleMeetDto.startTime,
           timeZone: createGoogleMeetDto.timeZone,
         },
         end: {
-          dateTime: createGoogleMeetDto.endTime || sixtyMinutesFromStart,
+          dateTime:
+            createGoogleMeetDto.endTime ||
+            new Date(
+              new Date(createGoogleMeetDto.startTime).getTime() +
+                60 * 60 * 1000,
+            ).toISOString(),
           timeZone: createGoogleMeetDto.timeZone,
-        },
-        conferenceData: {
-          createRequest: {
-            requestId,
-            // conferenceSolutionKey: { type: 'hangoutsMeet' },
-          },
-        },
-        reminders: {
-          useDefault: true,
         },
       };
 
@@ -81,13 +78,10 @@ export class GoogleMeetService {
 
       return {
         meetingId: response.data.id,
-        url: response.data.hangoutLink,
+        meetingUrl: response.data.hangoutLink,
+        conferenceData: response.data.conferenceData,
         startTime: response.data.start.dateTime,
         endTime: response.data.end.dateTime,
-        summary: response.data.summary,
-        status: response.data.status,
-        organizer: response.data.organizer,
-        conferenceData: response.data.conferenceData,
       };
     } catch (error) {
       this.logger.error('Failed to create Google Meet event', {
@@ -149,7 +143,13 @@ export class GoogleMeetService {
         `Google Meet event updated successfully: ${response.data.id}`,
       );
 
-      return response.data;
+      return {
+        meetingId: response.data.id,
+        meetingUrl: response.data.hangoutLink,
+        conferenceData: response.data.conferenceData,
+        startTime: response.data.start.dateTime,
+        endTime: response.data.end.dateTime,
+      };
     } catch (error) {
       this.logger.error('Failed to update Google Meet event', {
         message: error.message,
@@ -162,16 +162,21 @@ export class GoogleMeetService {
     }
   }
 
-  async getGoogleMeetById(meetingId: string) {
+  async getGoogleMeet(meetingId: string) {
     try {
       const calendar = google.calendar('v3');
-
       const response = await calendar.events.get({
         calendarId: 'primary',
         eventId: meetingId,
       });
 
-      return response.data;
+      return {
+        meetingId: response.data.id,
+        meetingUrl: response.data.hangoutLink,
+        conferenceData: response.data.conferenceData,
+        startTime: response.data.start.dateTime,
+        endTime: response.data.end.dateTime,
+      };
     } catch (error) {
       this.logger.error('Failed to get Google Meet event', {
         message: error.message,
