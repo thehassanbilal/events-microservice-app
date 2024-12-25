@@ -15,5 +15,9 @@ export class CreateGoogleMeetDto {
 
   @IsOptional()
   @IsString()
-  endTime: string;
+  endTime?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
 }

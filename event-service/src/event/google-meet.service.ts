@@ -1,86 +1,71 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
+import { GoogleAuth } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
 import { UpdateGoogleMeetDto } from './dto/update-google-meet.dto';
+import * as crypto from 'crypto';
+import * as path from 'path';
 
 @Injectable()
 export class GoogleMeetService {
-  private oauth2Client: OAuth2Client;
+  private auth: GoogleAuth;
   private readonly logger = new Logger(GoogleMeetService.name);
 
   constructor(private readonly configService: ConfigService) {
-    const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
-    const clientSecret = this.configService.get<string>('GOOGLE_CLIENT_SECRET');
-    const redirectUri = this.configService.get<string>('GOOGLE_REDIRECT_URI');
-    const refreshToken = this.configService.get<string>('GOOGLE_REFRESH_TOKEN');
-
-    if (!clientId || !clientSecret || !redirectUri || !refreshToken) {
-      this.logger.error('Missing Google credentials in environment variables');
-      throw new HttpException(
-        'Internal Server Error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    this.oauth2Client = new google.auth.OAuth2(
-      clientId,
-      clientSecret,
-      redirectUri,
-    );
-    this.oauth2Client.setCredentials({ refresh_token: refreshToken });
-  }
-
-  private async refreshAccessToken() {
     try {
-      const { credentials } = await this.oauth2Client.refreshAccessToken();
-      this.oauth2Client.setCredentials(credentials);
-      return credentials.access_token;
-    } catch (error) {
-      this.logger.error('Failed to refresh access token', {
-        message: error.message,
+      const keyFilePath = path.resolve(
+        process.cwd(),
+        'service-account-key.json',
+      );
+
+      this.auth = new google.auth.GoogleAuth({
+        keyFile: keyFilePath,
+        scopes: [
+          'https://www.googleapis.com/auth/calendar',
+          'https://www.googleapis.com/auth/calendar.events',
+        ],
       });
+
+      // Set global auth for all Google API calls
+      google.options({ auth: this.auth });
+    } catch (error) {
+      this.logger.error('Failed to initialize Google authentication', error);
       throw new HttpException(
-        'Failed to refresh access token',
+        'Failed to initialize Google authentication',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
-    }
-  }
-
-  private async ensureAccessToken() {
-    if (
-      !this.oauth2Client.credentials.access_token ||
-      this.oauth2Client.credentials.expiry_date < Date.now()
-    ) {
-      await this.refreshAccessToken();
     }
   }
 
   async createGoogleMeet(createGoogleMeetDto: CreateGoogleMeetDto) {
-    await this.ensureAccessToken();
-
     try {
-      const calendar = google.calendar({
-        version: 'v3',
-        auth: this.oauth2Client,
-      });
+      const calendar = google.calendar('v3');
+      const requestId = crypto.randomBytes(16).toString('hex');
+
+      const sixtyMinutesFromStart = new Date(
+        new Date(createGoogleMeetDto.startTime).getTime() + 60 * 60 * 1000,
+      ).toISOString();
 
       const event = {
         summary: createGoogleMeetDto.summary,
+        description: createGoogleMeetDto.description,
         start: {
           dateTime: createGoogleMeetDto.startTime,
           timeZone: createGoogleMeetDto.timeZone,
         },
         end: {
-          dateTime: createGoogleMeetDto.endTime,
+          dateTime: createGoogleMeetDto.endTime || sixtyMinutesFromStart,
           timeZone: createGoogleMeetDto.timeZone,
         },
         conferenceData: {
           createRequest: {
-            requestId: 'sample123',
-            conferenceSolutionKey: { type: 'hangoutsMeet' },
+            requestId,
+            // conferenceSolutionKey: { type: 'hangoutsMeet' },
           },
+        },
+        reminders: {
+          useDefault: true,
         },
       };
 
@@ -95,14 +80,39 @@ export class GoogleMeetService {
       );
 
       return {
-        url: response.data.hangoutLink,
         meetingId: response.data.id,
+        url: response.data.hangoutLink,
+        startTime: response.data.start.dateTime,
+        endTime: response.data.end.dateTime,
+        summary: response.data.summary,
+        status: response.data.status,
+        organizer: response.data.organizer,
+        conferenceData: response.data.conferenceData,
       };
     } catch (error) {
       this.logger.error('Failed to create Google Meet event', {
         message: error.message,
         response: error.response?.data,
       });
+
+      if (error.code === 403) {
+        throw new HttpException(
+          'Insufficient permissions to create Google Meet event',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      if (error.code === 404) {
+        throw new HttpException('Calendar not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (error.code === 409) {
+        throw new HttpException(
+          'Conflicting meeting already exists',
+          HttpStatus.CONFLICT,
+        );
+      }
+
       throw new HttpException(
         'Failed to create Google Meet event',
         HttpStatus.BAD_REQUEST,
@@ -114,13 +124,8 @@ export class GoogleMeetService {
     meetingId: string,
     updateGoogleMeetDto: UpdateGoogleMeetDto,
   ) {
-    await this.ensureAccessToken();
-
     try {
-      const calendar = google.calendar({
-        version: 'v3',
-        auth: this.oauth2Client,
-      });
+      const calendar = google.calendar('v3');
 
       const event = {
         summary: updateGoogleMeetDto.summary,
@@ -158,13 +163,8 @@ export class GoogleMeetService {
   }
 
   async getGoogleMeetById(meetingId: string) {
-    await this.ensureAccessToken();
-
     try {
-      const calendar = google.calendar({
-        version: 'v3',
-        auth: this.oauth2Client,
-      });
+      const calendar = google.calendar('v3');
 
       const response = await calendar.events.get({
         calendarId: 'primary',
@@ -185,13 +185,8 @@ export class GoogleMeetService {
   }
 
   async deleteGoogleMeet(meetingId: string) {
-    await this.ensureAccessToken();
-
     try {
-      const calendar = google.calendar({
-        version: 'v3',
-        auth: this.oauth2Client,
-      });
+      const calendar = google.calendar('v3');
 
       await calendar.events.delete({
         calendarId: 'primary',

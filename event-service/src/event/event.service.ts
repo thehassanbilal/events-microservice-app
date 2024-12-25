@@ -307,7 +307,32 @@ export class EventService {
     }
 
     if (isPhysical) {
-      return this.physicalEventModel.findOne({ event: eventId }).lean();
+      const thirdPartyMeetingDetails =
+        await this.getThirdPartyMeetingDetails(eventId);
+      // {
+      //     kind: 'calendar#event',
+      //     etag: '"3470054651024000"',
+      //     id: 'eln9l8crfhn0lhlsiq783a4nj0',
+      //     status: 'confirmed',
+      //     htmlLink: 'https://www.google.com/calendar/event?eid=ZWxuOWw4Y3JmaG4wbGhsc2lxNzgzYTRuajAgZXZlbnQtc2VydmljZUBza2lsbGFtaS00MjA3MDguaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20',
+      //     created: '2024-12-24T08:02:05.000Z',
+      //     updated: '2024-12-24T08:02:05.512Z',
+      //     creator: {
+      //       email: 'event-service@skillami-420708.iam.gserviceaccount.com',
+      //       self: true
+      //     },
+      //     organizer: {
+      //       email: 'event-service@skillami-420708.iam.gserviceaccount.com',
+      //       self: true
+      //     },
+      //     start: { dateTime: '2024-12-21T07:29:29Z', timeZone: 'UTC' },
+      //     end: { dateTime: '2024-12-21T08:29:29Z', timeZone: 'UTC' },
+      //     iCalUID: 'eln9l8crfhn0lhlsiq783a4nj0@google.com',
+      //     sequence: 0,
+      //     reminders: { useDefault: true },
+      //     eventType: 'default'
+      //   },
+      return thirdPartyMeetingDetails;
     }
 
     return null;
