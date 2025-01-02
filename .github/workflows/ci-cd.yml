@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up SSH agent and key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Step 4: Deploy to server via SSH key
+      - name: Deploy to server
+        run: |
+          set -e
+          ssh -o StrictHostKeyChecking=no hassanbilalchannel@api-events-service.codeinprogress.net.codeinprogress.net << 'EOF'
+            set -e
+            cd /sites/api-events-service.codeinprogress.net.com
+            sudo git fetch origin main
+            sudo git pull --ff-only origin main
+            sudo npm ci
+            sudo npm run build 
+            pm2 restart all
+          EOF
