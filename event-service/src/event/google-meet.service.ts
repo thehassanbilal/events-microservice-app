@@ -4,7 +4,6 @@ import { GoogleAuth } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { CreateGoogleMeetDto } from './dto/create-google-meet.dto';
 import { UpdateGoogleMeetDto } from './dto/update-google-meet.dto';
-import * as crypto from 'crypto';
 import * as path from 'path';
 
 @Injectable()
@@ -41,19 +40,17 @@ export class GoogleMeetService {
   async createGoogleMeet(createGoogleMeetDto: CreateGoogleMeetDto) {
     try {
       const calendar = google.calendar('v3');
-      const requestId = crypto.randomBytes(16).toString('hex');
+
+      // We need to verify our application from google because we are using the service account
+      // and added sensitive scopes.
+      // Once we fill all the required fields, we can send verification request to google.
 
       const event = {
         summary: createGoogleMeetDto.summary,
-        conferenceData: {
-          createRequest: {
-            requestId,
-            conferenceSolutionKey: { type: 'hangoutsMeet' },
-          },
-        },
+        description: createGoogleMeetDto.description,
         start: {
           dateTime: createGoogleMeetDto.startTime,
-          timeZone: createGoogleMeetDto.timeZone,
+          timeZone: createGoogleMeetDto.timeZone || 'UTC',
         },
         end: {
           dateTime:
@@ -62,19 +59,28 @@ export class GoogleMeetService {
               new Date(createGoogleMeetDto.startTime).getTime() +
                 60 * 60 * 1000,
             ).toISOString(),
-          timeZone: createGoogleMeetDto.timeZone,
+          timeZone: createGoogleMeetDto.timeZone || 'UTC',
         },
+        visibility: 'default',
+        reminders: {
+          useDefault: true,
+        },
+        attendees: [{ email: 'hassanbilalchannell@gmail.com' }],
       };
 
       const response = await calendar.events.insert({
+        auth: this.auth,
         calendarId: 'primary',
         requestBody: event,
+        sendUpdates: 'all',
         conferenceDataVersion: 1,
       });
 
       this.logger.log(
         `Google Meet event created successfully: ${response.data.id}`,
       );
+
+      console.log('here is data', response.data);
 
       return {
         meetingId: response.data.id,
