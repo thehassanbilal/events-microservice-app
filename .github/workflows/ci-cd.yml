@@ -24,7 +24,7 @@ jobs:
       - name: Deploy to server
         run: |
           set -e
-          ssh -o StrictHostKeyChecking=no hassanbilalchannel@api-events-service.codeinprogress.net.codeinprogress.net << 'EOF'
+          ssh -o StrictHostKeyChecking=no hassanbilalchannel@api-events-service.codeinprogress.net << 'EOF'
             set -e
             cd /sites/api-events-service.codeinprogress.net.com
             sudo git fetch origin main
