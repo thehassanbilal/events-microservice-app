@@ -15,7 +15,7 @@ export class EventService {
   // Event CRUD Operations
 
   async createEvent(eventDto: CreateEventDto) {
-    console.log('here is the eventDto', eventDto);
+    console.log('here is the createEvent eventDto', eventDto);
     return await this.eventProxyClient.send('createEvent', eventDto);
   }
 

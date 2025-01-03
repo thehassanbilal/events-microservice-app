@@ -19,6 +19,7 @@ export class EventController {
 
   @Post()
   async createEvent(@Body() eventDto: CreateEventDto) {
+    console.log('here is the createEvent eventDto in controller', eventDto);
     return this.eventService.createEvent(eventDto);
   }
 
