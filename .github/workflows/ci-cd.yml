@@ -26,7 +26,7 @@ jobs:
           set -e
           ssh -o StrictHostKeyChecking=no hassanbilalchannel@api-events-service.codeinprogress.net << 'EOF'
             set -e
-            cd /sites/api-events-service.codeinprogress.net.com
+            cd /sites/events-microservice-app
             sudo git fetch origin main
             sudo git pull --ff-only origin main
             sudo npm ci
