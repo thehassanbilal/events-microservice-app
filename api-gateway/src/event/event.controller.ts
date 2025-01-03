@@ -30,6 +30,10 @@ export class EventController {
 
   @Get('paginated')
   async getPaginatedAndFilteredEvents(@Body() paginationDto: PaginationDto) {
+    console.log(
+      'here is the getPaginatedAndFilteredEvents paginationDto in controller',
+      paginationDto,
+    );
     return this.eventService.getPaginatedAndFilteredEvents(paginationDto);
   }
 
