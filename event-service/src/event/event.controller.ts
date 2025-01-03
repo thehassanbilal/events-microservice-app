@@ -27,6 +27,7 @@ export class EventController {
 
   @MessagePattern('paginateEvents')
   async getPaginatedAndFilteredEvents(@Payload() paginationDto: PaginationDto) {
+    console.log('here is the paginationDto in event service', paginationDto);
     return this.eventService.getPaginatedAndFilteredEvents(paginationDto);
   }
 
