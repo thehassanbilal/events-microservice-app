@@ -29,7 +29,12 @@ jobs:
             cd /sites/events-microservice-app
             sudo git fetch origin main
             sudo git pull --ff-only origin main
-            sudo npm ci
-            sudo npm run build 
+            cd /sites/events-microservice-app/api-gateway
+            sudo npm install
+            sudo npm run build
+            cd /sites/events-microservice-app/event-service
+            sudo npm install
+            sudo npm run build
+            cd /sites/events-microservice-app/api-gateway
             pm2 restart all
           EOF
