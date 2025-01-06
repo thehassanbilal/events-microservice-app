@@ -39,8 +39,8 @@ export class EventService {
   // CRUD Operations for Events
 
   async createEvent(eventDto: CreateEventDto) {
+    console.log('here is the eventDto in service', eventDto);
     const newEvent = await this.eventModel.create(eventDto);
-    console.log('here is the eventDto in service', eventDto, newEvent);
 
     const isVirtual = eventDto.eventType === EventTypeEnum.VIRTUAL;
 
