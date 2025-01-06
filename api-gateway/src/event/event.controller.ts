@@ -25,6 +25,7 @@ export class EventController {
 
   @Get()
   async getAllEvents() {
+    console.log('here is the getAllEvents in controller');
     return this.eventService.getAllEvents();
   }
 
