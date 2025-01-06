@@ -12,6 +12,7 @@ export class EventController {
 
   @MessagePattern('createEvent')
   async createEvent(@Payload() eventDto: CreateEventDto) {
+    console.log('here is the createEvent eventDto in controller', eventDto);
     return this.eventService.createEvent(eventDto);
   }
 
