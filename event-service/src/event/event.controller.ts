@@ -18,6 +18,7 @@ export class EventController {
 
   @MessagePattern('findAllEvents')
   async getAllEvents() {
+    console.log('here is data in getAllEvents in controller event service');
     return this.eventService.getAllEvents();
   }
 
