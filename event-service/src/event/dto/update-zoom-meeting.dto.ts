@@ -11,7 +11,7 @@ export class UpdateZoomMeetingDto {
 
   @IsOptional()
   @IsString()
-  start_time?: string;
+  startTime?: string;
 
   @IsOptional()
   @IsNumber()

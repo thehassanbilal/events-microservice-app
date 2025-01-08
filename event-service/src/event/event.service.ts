@@ -125,20 +125,26 @@ export class EventService {
     return newVirtualEvent.toObject();
   }
 
-  async updateVirtualEvent(eventDto: UpdateVirtualEventDto) {
+  async updateVirtualEventByEvent(eventDto: UpdateVirtualEventDto) {
     const { id, ...rest } = eventDto;
 
-    const event = await this.virtualEventModel.findById(id);
+    const event = await this.virtualEventModel.findOne({
+      event: id,
+    });
+
+    if (!event) {
+      return { message: 'Event not found', data: null };
+    }
 
     if (eventDto.source) {
       const createdMeeting =
         await this.createMeetingOnThridPartyService(eventDto);
-      const updatedEvent = await this.virtualEventModel.findByIdAndUpdate(
-        id,
+      const updatedEvent = await this.virtualEventModel.findOneAndUpdate(
+        { event: id },
         { ...rest, meetingId: createdMeeting.meetingId },
         { new: true },
       );
-      return updatedEvent.toObject();
+      return updatedEvent;
     }
 
     await this.updateMeetingOnThridPartyService(event, eventDto);
@@ -255,9 +261,7 @@ export class EventService {
 
     switch (source) {
       case VirtualEventSource.ZOOM:
-        await this.zoomService.updateZoomMeeting(meetingId, {
-          start_time: eventDto.startTime,
-        });
+        await this.zoomService.updateZoomMeeting(meetingId, eventDto);
         break;
       case VirtualEventSource.GOOGLE_MEET:
         await this.googleMeetService.updateGoogleMeet(meetingId, {
@@ -295,11 +299,17 @@ export class EventService {
     if (isVirtual) {
       const thirdPartyMeetingDetails =
         await this.getThirdPartyMeetingDetails(eventId);
+      const virtualEventRecord = await this.virtualEventModel.findOne({
+        event: eventId,
+      });
+
+      const source = virtualEventRecord.source;
       const details = {
         id: thirdPartyMeetingDetails.id,
+        source,
         topic: thirdPartyMeetingDetails.topic,
-        start_time: thirdPartyMeetingDetails.start_time,
-        join_url: thirdPartyMeetingDetails.join_url,
+        startTime: thirdPartyMeetingDetails.start_time,
+        joinUrl: thirdPartyMeetingDetails.join_url,
         password: thirdPartyMeetingDetails.password,
         duration: thirdPartyMeetingDetails.duration,
         hostEmail: thirdPartyMeetingDetails.host_email,

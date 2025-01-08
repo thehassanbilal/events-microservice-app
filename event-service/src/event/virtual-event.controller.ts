@@ -30,7 +30,7 @@ export class VirtualEventController {
 
   @MessagePattern('updateVirtualEvent')
   async updateVirtualEvent(@Payload() eventDto: UpdateVirtualEventDto) {
-    return this.eventService.updateVirtualEvent(eventDto);
+    return this.eventService.updateVirtualEventByEvent(eventDto);
   }
 
   @MessagePattern('deleteVirtualEvent')

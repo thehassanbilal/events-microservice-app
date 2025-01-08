@@ -110,11 +110,24 @@ export class ZoomService {
     try {
       const zoomOAuthToken = await this.getZoomOAuthToken();
 
-      this.logger.debug('Updating Zoom meeting with payload:', updateData);
+      if (!updateData || Object.keys(updateData).length === 0) {
+        throw new HttpException(
+          'Invalid update payload',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      this.logger.debug(
+        'Updating Zoom meeting with payload:',
+        JSON.stringify(updateData, null, 2),
+      );
 
       const response = await axios.patch(
-        this.getMeetingById(meetingId),
-        updateData,
+        `https://api.zoom.us/v2/meetings/${meetingId}`,
+        {
+          start_time: updateData.startTime,
+          duration: updateData.duration,
+        },
         {
           headers: {
             Authorization: `Bearer ${zoomOAuthToken}`,
@@ -124,12 +137,12 @@ export class ZoomService {
       );
 
       this.logger.log(`Zoom meeting updated successfully: ${response.data.id}`);
-
       return response.data;
     } catch (error) {
       this.logger.error('Failed to update Zoom meeting', {
         message: error.message,
-        response: error.response?.data,
+        response: error.response?.data || 'No response data',
+        stack: error.stack,
       });
       throw new HttpException(
         'Failed to update Zoom meeting',

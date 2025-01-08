@@ -80,8 +80,6 @@ export class GoogleMeetService {
         `Google Meet event created successfully: ${response.data.id}`,
       );
 
-      console.log('here is data', response.data);
-
       return {
         meetingId: response.data.id,
         meetingUrl: response.data.hangoutLink,
