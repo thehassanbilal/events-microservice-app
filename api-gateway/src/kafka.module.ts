@@ -72,10 +72,19 @@ export class KafkaModule implements OnModuleInit {
       'deleteEventTeam',
     ];
 
+    const languageRequestPatterns = [
+      'createLanguage',
+      'findAllLanguage',
+      'findOneLanguage',
+      'updateLanguage',
+      'deleteLanguage',
+    ];
+
     const allRequestPatterns = [
       ...eventRequestPatterns,
       ...eventCategoryRequestPatterns,
       ...eventTeamRequestPatterns,
+      ...languageRequestPatterns,
     ];
 
     allRequestPatterns.forEach((pattern) => {

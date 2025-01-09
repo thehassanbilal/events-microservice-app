@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { Types } from 'mongoose';
+import { UpdatePhysicalEventDto } from './dto/update-physical-event.dto';
 
 @Controller('physical')
 export class PhysicalEventController {
@@ -32,7 +33,7 @@ export class PhysicalEventController {
   @Put(':id')
   async updatePhysicalEvent(
     @Param('id') id: Types.ObjectId,
-    @Body() eventDto: any,
+    @Body() eventDto: UpdatePhysicalEventDto,
   ) {
     return this.eventService.updatePhysicalEvent(id, eventDto);
   }

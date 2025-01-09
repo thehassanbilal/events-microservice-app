@@ -2,6 +2,7 @@ import { Controller, Param } from '@nestjs/common';
 import { EventService } from './event.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { Types } from 'mongoose';
+import { UpdatePhysicalEventDto } from './dto/update-physical-event.dto';
 
 @Controller('events/physical')
 export class PhysicalEventController {
@@ -18,11 +19,8 @@ export class PhysicalEventController {
   }
 
   @MessagePattern('updatePhysicalEvent')
-  async updatePhysicalEvent(
-    @Param('id') id: Types.ObjectId,
-    @Payload() eventDto: any,
-  ) {
-    return this.eventService.updatePhysicalEvent(id, eventDto);
+  async updatePhysicalEvent(@Payload() eventDto: UpdatePhysicalEventDto) {
+    return this.eventService.updatePhysicalEventByEvent(eventDto);
   }
 
   @MessagePattern('deletePhysicalEvent')

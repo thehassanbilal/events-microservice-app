@@ -20,6 +20,7 @@ import { NotFoundError } from 'rxjs';
 import { ZoomService } from './zoom.service';
 import { GoogleMeetService } from './google-meet.service';
 import { VirtualEventSource } from './enum/virtual-event-source.enum';
+import { UpdatePhysicalEventDto } from './dto/update-physical-event.dto';
 
 @Injectable()
 export class EventService {
@@ -104,6 +105,14 @@ export class EventService {
         {
           path: 'languages',
           select: '_id name countryCode',
+        },
+        {
+          path: 'team',
+          select: '_id name',
+        },
+        {
+          path: 'category',
+          select: '_id name',
         },
       ],
     );
@@ -190,13 +199,15 @@ export class EventService {
     return newPhysicalEvent.toObject();
   }
 
-  async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
-    const updatedEvent = await this.physicalEventModel.findByIdAndUpdate(
-      id,
-      eventDto,
+  async updatePhysicalEventByEvent(eventDto: UpdatePhysicalEventDto) {
+    const { id, ...rest } = eventDto;
+
+    const updatedEvent = await this.physicalEventModel.findOneAndUpdate(
+      { event: id },
+      rest,
       { new: true },
     );
-    return updatedEvent;
+    return updatedEvent.toObject();
   }
 
   async getPaginatedAndFilteredVirtualEvents(paginationDto: PaginationDto) {
@@ -318,32 +329,11 @@ export class EventService {
     }
 
     if (isPhysical) {
-      const thirdPartyMeetingDetails =
-        await this.getThirdPartyMeetingDetails(eventId);
-      // {
-      //     kind: 'calendar#event',
-      //     etag: '"3470054651024000"',
-      //     id: 'eln9l8crfhn0lhlsiq783a4nj0',
-      //     status: 'confirmed',
-      //     htmlLink: 'https://www.google.com/calendar/event?eid=ZWxuOWw4Y3JmaG4wbGhsc2lxNzgzYTRuajAgZXZlbnQtc2VydmljZUBza2lsbGFtaS00MjA3MDguaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20',
-      //     created: '2024-12-24T08:02:05.000Z',
-      //     updated: '2024-12-24T08:02:05.512Z',
-      //     creator: {
-      //       email: 'event-service@skillami-420708.iam.gserviceaccount.com',
-      //       self: true
-      //     },
-      //     organizer: {
-      //       email: 'event-service@skillami-420708.iam.gserviceaccount.com',
-      //       self: true
-      //     },
-      //     start: { dateTime: '2024-12-21T07:29:29Z', timeZone: 'UTC' },
-      //     end: { dateTime: '2024-12-21T08:29:29Z', timeZone: 'UTC' },
-      //     iCalUID: 'eln9l8crfhn0lhlsiq783a4nj0@google.com',
-      //     sequence: 0,
-      //     reminders: { useDefault: true },
-      //     eventType: 'default'
-      //   },
-      return thirdPartyMeetingDetails;
+      const physicalEventRecord = await this.physicalEventModel.findOne({
+        event: eventId,
+      });
+
+      return physicalEventRecord;
     }
 
     return null;

@@ -5,6 +5,7 @@ import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { PaginationDto } from 'src/global/paginated.dto';
+import { UpdatePhysicalEventDto } from './dto/update-physical-event.dto';
 
 @Injectable()
 export class EventService {
@@ -104,7 +105,10 @@ export class EventService {
     return this.eventProxyClient.send('findOnePhysicalEvent', { id });
   }
 
-  async updatePhysicalEvent(id: Types.ObjectId, eventDto: any) {
+  async updatePhysicalEvent(
+    id: Types.ObjectId,
+    eventDto: UpdatePhysicalEventDto,
+  ) {
     return this.eventProxyClient.send('updatePhysicalEvent', {
       id,
       ...eventDto,

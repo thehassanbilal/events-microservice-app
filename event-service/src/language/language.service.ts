@@ -1,29 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Language, LanguageDocument } from './schema/language.schema';
 
 @Injectable()
 export class LanguageService {
-  create(createLanguageDto: CreateLanguageDto) {
-    console.log('here is data createLanguageDto', createLanguageDto);
-    return 'This action adds a new language';
+  constructor(
+    @InjectModel(Language.name) private languageModel: Model<LanguageDocument>,
+  ) {}
+
+  async create(createLanguageDto: CreateLanguageDto) {
+    const result = await this.languageModel.create(createLanguageDto);
+    return result;
   }
 
-  findAll() {
-    return `This action returns all language`;
+  async findAll() {
+    const result = await this.languageModel.find();
+    return result;
   }
 
-  findOne(id: Types.ObjectId) {
-    return `This action returns a #${id} language`;
+  async findOne(id: Types.ObjectId) {
+    const result = await this.languageModel.findById(id);
+    return result;
   }
 
-  update(id: Types.ObjectId, updateLanguageDto: UpdateLanguageDto) {
-    console.log('here is data updateLanguageDto', updateLanguageDto);
-    return `This action updates a #${id} language`;
+  async update(id: Types.ObjectId, updateLanguageDto: UpdateLanguageDto) {
+    const result = await this.languageModel.findByIdAndUpdate(
+      id,
+      updateLanguageDto,
+      {
+        new: true,
+      },
+    );
+    return result;
   }
 
-  remove(id: Types.ObjectId) {
-    return `This action removes a #${id} language`;
+  async remove(id: Types.ObjectId) {
+    const result = await this.languageModel.findByIdAndDelete(id);
+    return result;
   }
 }
