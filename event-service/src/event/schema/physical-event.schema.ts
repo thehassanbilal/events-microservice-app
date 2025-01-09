@@ -27,6 +27,12 @@ export class PhysicalEvent {
   @Prop()
   venue: string;
 
+  @Prop({ default: new Date() })
+  startTime: Date;
+
+  @Prop({ default: 60 })
+  duration: number;
+
   @Prop()
   attendees: Attendees[];
 

@@ -1,4 +1,4 @@
-import { IsMongoId, IsOptional, IsString } from 'class-validator';
+import { IsMongoId, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class UpdatePhysicalEventDto {
@@ -8,4 +8,12 @@ export class UpdatePhysicalEventDto {
   @IsOptional()
   @IsString()
   venue: string;
+
+  @IsOptional()
+  @IsString()
+  startTime: Date;
+
+  @IsOptional()
+  @IsNumber()
+  duration: number;
 }
