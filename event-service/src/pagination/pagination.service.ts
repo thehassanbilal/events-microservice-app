@@ -14,10 +14,6 @@ export async function paginateWithMongoose<T>(
 
   const queryBuilder = model.find(query);
 
-  if (sort) {
-    queryBuilder.sort(sort);
-  }
-
   if (filter) {
     queryBuilder.where('name').regex(new RegExp(filter, 'i'));
   }
@@ -28,7 +24,11 @@ export async function paginateWithMongoose<T>(
     });
   }
 
-  const records = await queryBuilder.skip(skip).limit(limit).exec();
+  const records = await queryBuilder
+    .skip(skip)
+    .limit(limit)
+    .sort(sort || { createdAt: -1 })
+    .exec();
   const totalRecords = await model.countDocuments(query).exec();
   const totalPages = Math.ceil(totalRecords / limit);
 
