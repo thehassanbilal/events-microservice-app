@@ -26,7 +26,6 @@ export class EventCategoryService {
   }
 
   async findAll() {
-    console.log('here is data');
     const result = await this.eventCategoryModel.find();
     return result;
   }

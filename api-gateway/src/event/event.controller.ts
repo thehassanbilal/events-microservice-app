@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import { Types } from 'mongoose';
@@ -30,11 +31,7 @@ export class EventController {
   }
 
   @Get('paginated')
-  async getPaginatedAndFilteredEvents(@Body() paginationDto: PaginationDto) {
-    console.log(
-      'here is the getPaginatedAndFilteredEvents paginationDto in controller',
-      paginationDto,
-    );
+  async getPaginatedAndFilteredEvents(@Query() paginationDto: PaginationDto) {
     return this.eventService.getPaginatedAndFilteredEvents(paginationDto);
   }
 

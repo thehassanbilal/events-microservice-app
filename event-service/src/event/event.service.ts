@@ -202,8 +202,6 @@ export class EventService {
   async updatePhysicalEventByEvent(eventDto: UpdatePhysicalEventDto) {
     const { id, ...rest } = eventDto;
 
-    console.log('here is data', id, rest);
-
     const updatedEvent = await this.physicalEventModel.findOneAndUpdate(
       { event: id },
       rest,
