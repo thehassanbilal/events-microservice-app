@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Cursor Rules for Events Microservice App
+
+## PROJECT OVERVIEW
+This is a microservice-based events application with:
+- **API Gateway**: NestJS service handling HTTP requests and routing to microservices via Kafka
+- **Event Service**: Core business logic service with MongoDB persistence
+- **Kafka**: Message broker for inter-service communication
+- **MongoDB**: Primary database with Mongoose ODM
+- **Docker**: Containerized services with docker-compose
+
+Remember: This is a microservice architecture - always consider the impact of changes across services and maintain proper service boundaries.
