@@ -17,7 +17,17 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "seed": "ts-node src/seed.ts",
+    "seed:all": "ts-node src/seed.ts run-all",
+    "seed:essential": "ts-node src/seed.ts run-essential",
+    "seed:specific": "ts-node src/seed.ts run-specific",
+    "seed:priority": "ts-node src/seed.ts run-by-priority",
+    "seed:validate": "ts-node src/seed.ts run-with-validation",
+    "seed:status": "ts-node src/seed.ts status",
+    "seed:clear": "ts-node src/seed.ts clear-results",
+    "seed:help": "ts-node src/seed.ts help",
+    "seed:dry-run": "ts-node src/seed.ts run-all --dry-run"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

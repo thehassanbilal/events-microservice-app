@@ -4,7 +4,7 @@ import { CreateEventTeamDto } from './dto/create-event-team.dto';
 import { EventTeam, EventTeamDocument } from './schema/event-team.schema';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { paginateWithMongoose } from 'src/pagination/pagination.service';
+import { paginateWithMongoose } from '../pagination/pagination.service';
 
 @Injectable()
 export class EventTeamService {

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EventCategoryService } from './event-category.service';
 import { EventCategoryController } from './event-category.controller';
+import { EventCategorySeeder } from './event-category.seeder';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   EventCategory,
@@ -14,6 +15,7 @@ import {
     ]),
   ],
   controllers: [EventCategoryController],
-  providers: [EventCategoryService],
+  providers: [EventCategoryService, EventCategorySeeder],
+  exports: [EventCategorySeeder],
 })
 export class EventCategoryModule {}

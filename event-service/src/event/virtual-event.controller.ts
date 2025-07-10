@@ -1,9 +1,9 @@
-import { Controller, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { EventService } from './event.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
 import { Types } from 'mongoose';
-import { PaginationDto } from 'src/global/pagination.dto';
+import { PaginationDto } from '../global/pagination.dto';
 
 @Controller('events/virtual')
 export class VirtualEventController {
@@ -24,7 +24,7 @@ export class VirtualEventController {
   }
 
   @MessagePattern('findOneVirtualEvent')
-  async getVirtualEventById(@Param('id') id: Types.ObjectId) {
+  async getVirtualEventById(@Payload('id') id: Types.ObjectId) {
     return this.eventService.getVirtualEventById(id);
   }
 
@@ -34,7 +34,7 @@ export class VirtualEventController {
   }
 
   @MessagePattern('deleteVirtualEvent')
-  async deleteVirtualEvent(@Param('id') id: Types.ObjectId) {
+  async deleteVirtualEvent(@Payload('id') id: Types.ObjectId) {
     return this.eventService.deleteVirtualEvent(id);
   }
 }

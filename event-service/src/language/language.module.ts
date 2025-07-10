@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { LanguageService } from './language.service';
 import { LanguageController } from './language.controller';
 import { LanguageSeeder } from './language.seeder';
@@ -16,11 +16,6 @@ import { Language, LanguageSchema } from './schema/language.schema';
   ],
   controllers: [LanguageController],
   providers: [LanguageService, LanguageSeeder],
+  exports: [LanguageSeeder],
 })
-export class LanguageModule implements OnModuleInit {
-  constructor(private readonly languageSeeder: LanguageSeeder) {}
-
-  async onModuleInit() {
-    await this.languageSeeder.seed();
-  }
-}
+export class LanguageModule {}

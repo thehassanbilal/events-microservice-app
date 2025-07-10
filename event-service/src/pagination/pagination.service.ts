@@ -1,6 +1,6 @@
 import { Model, PipelineStage } from 'mongoose';
 
-import { PaginationDto } from 'src/global/pagination.dto';
+import { PaginationDto } from '../global/pagination.dto';
 
 export async function paginateWithMongoose<T>(
   model: Model<T>,

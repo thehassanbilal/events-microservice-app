@@ -16,6 +16,16 @@ import { EventController } from './event.controller';
 import { ZoomService } from './zoom.service';
 import { GoogleMeetService } from './google-meet.service';
 import { ConfigService } from '@nestjs/config';
+import { EventSeeder } from './event.seeder';
+import {
+  EventCategory,
+  EventCategorySchema,
+} from '../event-category/schema/event-category.schema';
+import {
+  EventTeam,
+  EventTeamSchema,
+} from '../event-team/schema/event-team.schema';
+import { Language, LanguageSchema } from '../language/schema/language.schema';
 
 @Module({
   imports: [
@@ -23,6 +33,9 @@ import { ConfigService } from '@nestjs/config';
       { name: Event.name, schema: EventSchema },
       { name: VirtualEvent.name, schema: VirtualEventSchema },
       { name: PhysicalEvent.name, schema: PhysicalEventSchema },
+      { name: EventCategory.name, schema: EventCategorySchema },
+      { name: EventTeam.name, schema: EventTeamSchema },
+      { name: Language.name, schema: LanguageSchema },
     ]),
   ],
   controllers: [
@@ -30,6 +43,13 @@ import { ConfigService } from '@nestjs/config';
     VirtualEventController,
     PhysicalEventController,
   ],
-  providers: [EventService, ZoomService, GoogleMeetService, ConfigService],
+  providers: [
+    EventService,
+    ZoomService,
+    GoogleMeetService,
+    ConfigService,
+    EventSeeder,
+  ],
+  exports: [EventSeeder],
 })
 export class EventModule {}

@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, HydratedDocument, Schema as MongooseSchema } from 'mongoose';
-import { EventCategory } from 'src/event-category/schema/event-category.schema';
-import { EventTeam } from 'src/event-team/schema/event-team.schema';
+import { EventCategory } from '../../event-category/schema/event-category.schema';
+import { EventTeam } from '../../event-team/schema/event-team.schema';
 import { EventStatus } from '../enum/event-status.enum';
 import { EventTypeEnum } from '../enum/event-type-enum';
-import { Language } from 'src/language/schema/language.schema';
+import { Language } from '../../language/schema/language.schema';
 
 export type EventDocument = HydratedDocument<Event>;
 
@@ -21,6 +21,12 @@ export type EventDocument = HydratedDocument<Event>;
 export class Event extends Document {
   @Prop({ required: true, enum: EventTypeEnum, immutable: true })
   eventType: EventTypeEnum;
+
+  @Prop({ required: true, default: 'New Event' })
+  title: string;
+
+  @Prop({ required: true, default: 'Some description for the event' })
+  description: string;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,

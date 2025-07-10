@@ -7,9 +7,9 @@ import {
 } from './schema/event-category.schema';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { PaginationDto } from 'src/global/pagination.dto';
-import { paginateWithMongoose } from 'src/pagination/pagination.service';
-import { catchException } from 'src/common/handle.exceptionh.helper';
+import { PaginationDto } from '../global/pagination.dto';
+import { paginateWithMongoose } from '../pagination/pagination.service';
+import { catchException } from '../common/handle.exceptionh.helper';
 
 @Injectable()
 export class EventCategoryService {

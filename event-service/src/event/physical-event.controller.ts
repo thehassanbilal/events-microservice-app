@@ -1,4 +1,4 @@
-import { Controller, Param } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { EventService } from './event.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { Types } from 'mongoose';
@@ -14,7 +14,7 @@ export class PhysicalEventController {
   }
 
   @MessagePattern('findOnePhysicalEvent')
-  async getPhysicalEventById(@Param('id') id: Types.ObjectId) {
+  async getPhysicalEventById(@Payload('id') id: Types.ObjectId) {
     return this.eventService.getPhysicalEventById(id);
   }
 
@@ -24,7 +24,7 @@ export class PhysicalEventController {
   }
 
   @MessagePattern('deletePhysicalEvent')
-  async deletePhysicalEvent(@Param('id') id: Types.ObjectId) {
+  async deletePhysicalEvent(@Payload('id') id: Types.ObjectId) {
     return this.eventService.deletePhysicalEvent(id);
   }
 }

@@ -4,11 +4,12 @@ import { AppService } from './app.service';
 import { EventModule } from './event/event.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuration from 'config/configuration';
+import configuration from '../config/configuration';
 import { Connection } from 'mongoose';
 import { EventCategoryModule } from './event-category/event-category.module';
 import { EventTeamModule } from './event-team/event-team.module';
 import { LanguageModule } from './language/language.module';
+import { SeedsModule } from './common/seeds/seeds.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { LanguageModule } from './language/language.module';
         },
       }),
     }),
+    SeedsModule,
     EventModule,
     EventCategoryModule,
     EventTeamModule,

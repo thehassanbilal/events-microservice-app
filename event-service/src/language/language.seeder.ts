@@ -1,62 +1,84 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Language } from './schema/language.schema';
+import { BaseSeeder, SeedResult } from '../common/seeds/base.seeder';
 
 @Injectable()
-export class LanguageSeeder {
-  private readonly logger = new Logger(LanguageSeeder.name);
-
+export class LanguageSeeder extends BaseSeeder {
   constructor(
     @InjectModel(Language.name) private languageModel: Model<Language>,
-  ) {}
+  ) {
+    super();
+  }
 
-  async seed() {
-    const languages = [
-      { name: 'English (US)', countryCode: 'US' }, // United States
-      { name: 'English (GB)', countryCode: 'GB' }, // United Kingdom
-      { name: 'French', countryCode: 'FR' }, // France
-      { name: 'German', countryCode: 'DE' }, // Germany
-      { name: 'Italian', countryCode: 'IT' }, // Italy
-      { name: 'Spanish', countryCode: 'ES' }, // Spain
-      { name: 'Japanese', countryCode: 'JP' }, // Japan
-      { name: 'Chinese', countryCode: 'CN' }, // China
-      { name: 'Hindi', countryCode: 'IN' }, // India
-      { name: 'Arabic (SA)', countryCode: 'SA' }, // Saudi Arabia
-      { name: 'Arabic (SYR)', countryCode: 'SYR' }, // Saudi Arabia
-      { name: 'Dutch', countryCode: 'NL' }, // Netherlands
-      { name: 'Swedish', countryCode: 'SE' }, // Sweden
-      { name: 'Norwegian', countryCode: 'NO' }, // Norway
-      { name: 'Danish', countryCode: 'DK' }, // Denmark
-      { name: 'Finnish', countryCode: 'FI' }, // Finland
-      { name: 'Polish', countryCode: 'PL' }, // Poland
-      { name: 'Czech', countryCode: 'CZ' }, // Czech Republic
-      { name: 'Hungarian', countryCode: 'HU' }, // Hungary
-      { name: 'Romanian', countryCode: 'RO' }, // Romania
-      { name: 'Urdu', countryCode: 'PK' }, // Pakistan
-      { name: 'Bengali', countryCode: 'BD' }, // Bangladesh
-      { name: 'Tagalog', countryCode: 'PH' }, // Philippines
-      { name: 'Korean', countryCode: 'KR' }, // South Korea
-      { name: 'Thai', countryCode: 'TH' }, // Thailand
-      { name: 'Vietnamese', countryCode: 'VN' }, // Vietnam
-      { name: 'Malay', countryCode: 'MY' }, // Malaysia
-      { name: 'Persian', countryCode: 'IR' }, // Iran
-      { name: 'Greek', countryCode: 'GR' }, // Greece
-      { name: 'Turkish', countryCode: 'TR' }, // Turkey
-      { name: 'Ukrainian', countryCode: 'UA' }, // Ukraine
-      { name: 'Russian', countryCode: 'RU' }, // Russia
-      { name: 'Portuguese', countryCode: 'PT' }, // Portugal
-    ];
-    // test comment
+  async seed(): Promise<SeedResult> {
+    try {
+      const languages = [
+        { name: 'English (US)', countryCode: 'US' },
+        { name: 'English (GB)', countryCode: 'GB' },
+        { name: 'French', countryCode: 'FR' },
+        { name: 'German', countryCode: 'DE' },
+        { name: 'Italian', countryCode: 'IT' },
+        { name: 'Spanish', countryCode: 'ES' },
+        { name: 'Japanese', countryCode: 'JP' },
+        { name: 'Chinese', countryCode: 'CN' },
+        { name: 'Hindi', countryCode: 'IN' },
+        { name: 'Arabic (SA)', countryCode: 'SA' },
+        { name: 'Arabic (SYR)', countryCode: 'SYR' },
+        { name: 'Dutch', countryCode: 'NL' },
+        { name: 'Swedish', countryCode: 'SE' },
+        { name: 'Norwegian', countryCode: 'NO' },
+        { name: 'Danish', countryCode: 'DK' },
+        { name: 'Finnish', countryCode: 'FI' },
+        { name: 'Polish', countryCode: 'PL' },
+        { name: 'Czech', countryCode: 'CZ' },
+        { name: 'Hungarian', countryCode: 'HU' },
+        { name: 'Romanian', countryCode: 'RO' },
+        { name: 'Urdu', countryCode: 'PK' },
+        { name: 'Bengali', countryCode: 'BD' },
+        { name: 'Tagalog', countryCode: 'PH' },
+        { name: 'Korean', countryCode: 'KR' },
+        { name: 'Thai', countryCode: 'TH' },
+        { name: 'Vietnamese', countryCode: 'VN' },
+        { name: 'Malay', countryCode: 'MY' },
+        { name: 'Persian', countryCode: 'IR' },
+        { name: 'Greek', countryCode: 'GR' },
+        { name: 'Turkish', countryCode: 'TR' },
+        { name: 'Ukrainian', countryCode: 'UA' },
+        { name: 'Russian', countryCode: 'RU' },
+        { name: 'Portuguese', countryCode: 'PT' },
+      ];
 
-    for (const language of languages) {
-      const existingLanguage = await this.languageModel
-        .findOne({ countryCode: language.countryCode })
-        .exec();
-      if (!existingLanguage) {
-        const createdLanguage = new this.languageModel(language);
-        await createdLanguage.save();
+      let createdCount = 0;
+      let skippedCount = 0;
+
+      for (const language of languages) {
+        const exists = await this.checkIfExists(
+          this.languageModel,
+          { countryCode: language.countryCode },
+          `Language with country code ${language.countryCode} already exists`,
+        );
+
+        if (!exists) {
+          await this.createData(this.languageModel, language);
+          createdCount++;
+        } else {
+          skippedCount++;
+        }
       }
+
+      return {
+        success: true,
+        message: `Language seeding completed. Created: ${createdCount}, Skipped: ${skippedCount}`,
+        data: { created: createdCount, skipped: skippedCount },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Language seeding failed: ${error.message}`,
+        error,
+      };
     }
   }
 }

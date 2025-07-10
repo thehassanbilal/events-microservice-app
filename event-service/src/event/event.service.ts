@@ -10,10 +10,10 @@ import {
   PhysicalEventDocument,
 } from './schema/physical-event.schema';
 import { UpdateVirtualEventDto } from './dto/update-virtual-event.dto';
-import { PaginationDto } from 'src/global/pagination.dto';
+import { PaginationDto } from '../global/pagination.dto';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { paginateWithMongoose } from 'src/pagination/pagination.service';
+import { paginateWithMongoose } from '../pagination/pagination.service';
 import { Event, EventDocument } from './schema/event.schema';
 import { EventTypeEnum } from './enum/event-type-enum';
 import { NotFoundError } from 'rxjs';

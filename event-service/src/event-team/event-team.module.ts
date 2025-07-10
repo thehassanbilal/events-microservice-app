@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { EventTeamService } from './event-team.service';
 import { EventTeamController } from './event-team.controller';
+import { EventTeamSeeder } from './event-team.seeder';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EventTeam, EventTeamSchema } from './schema/event-team.schema';
 
@@ -14,6 +15,7 @@ import { EventTeam, EventTeamSchema } from './schema/event-team.schema';
     ]),
   ],
   controllers: [EventTeamController],
-  providers: [EventTeamService],
+  providers: [EventTeamService, EventTeamSeeder],
+  exports: [EventTeamSeeder],
 })
 export class EventTeamModule {}
